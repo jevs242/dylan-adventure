@@ -1,16 +1,18 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "PrototipoCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "MySaveGame.h"
+#include "Sword.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
-//////////////////////////////////////////////////////////////////////////
-// APrototipoCharacter
+#define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
+#define log(x) UE_LOG(LogTemp, Error, TEXT(x));
 
 APrototipoCharacter::APrototipoCharacter()
 {
@@ -43,12 +45,21 @@ APrototipoCharacter::APrototipoCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
-}
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+	BoxCollision->SetupAttachment(RootComponent);
+
+	Resistence = MaxResistence;
+
+	Health = MaxHealth;
+
+	//Shield
+
+	Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield"));
+	Shield->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Shield->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Shield_l"));
+
+}
 
 void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -57,84 +68,238 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APrototipoCharacter::JumpCheck);
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &APrototipoCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APrototipoCharacter::MoveRight);
 
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &APrototipoCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &APrototipoCharacter::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &APrototipoCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &APrototipoCharacter::TouchStopped);
+	//Run
 
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APrototipoCharacter::OnResetVR);
+	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &APrototipoCharacter::Run);
+	PlayerInputComponent->BindAction("Run", IE_Released, this, &APrototipoCharacter::NotRun);
+
+	//Attack
+
+	PlayerInputComponent->BindAction("AttackSword", IE_Pressed, this, &APrototipoCharacter::Attack);
+
+	//Defence
+
+	PlayerInputComponent->BindAction("Defence", IE_Pressed, this, &APrototipoCharacter::Defence);
+	PlayerInputComponent->BindAction("Defence", IE_Released, this, &APrototipoCharacter::Defenceoff);
+
 }
 
-
-void APrototipoCharacter::OnResetVR()
+float APrototipoCharacter::GetHealthPercent() const
 {
-	// If Prototipo is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in Prototipo.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
+	return Health / MaxHealth;
 }
 
-void APrototipoCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
+bool APrototipoCharacter::AttackAnim() const
 {
-		Jump();
+	return bAttack;
 }
 
-void APrototipoCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
+float APrototipoCharacter::GetResistencePercent() const
 {
-		StopJumping();
+	return Resistence / MaxResistence;
 }
 
-void APrototipoCharacter::TurnAtRate(float Rate)
+void APrototipoCharacter::BeginPlay()
 {
-	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	Super::BeginPlay();
+
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APrototipoCharacter::BeginOverlap);
+
+	if (SwordClass != nullptr)
+	{
+		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Sword_r"));
+		Sword->SetOwner(this);
+	}
+
 }
 
-void APrototipoCharacter::LookUpAtRate(float Rate)
+void APrototipoCharacter::Tick(float DeltaSeconds)
 {
-	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	Super::Tick(DeltaSeconds);
+
+	vResistence(DeltaSeconds);
+
+	//if (M_DefenceLoop && bDefence)
+	//{
+	//	PlayAnimMontage(M_DefenceLoop, 0.1, NAME_None);
+
+	//}
+
 }
 
 void APrototipoCharacter::MoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
+	if (!bAttack)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+		if ((Controller != nullptr) && (Value != 0.0f))
+		{
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			AddMovementInput(Direction, Value);
+			bLStay = false;
+		}
+		else
+		{
+			bLStay = true;
+		}
 	}
 }
 
 void APrototipoCharacter::MoveRight(float Value)
 {
-	if ( (Controller != nullptr) && (Value != 0.0f) )
+	if (!bAttack)
 	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-	
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
-		AddMovementInput(Direction, Value);
+		if ((Controller != nullptr) && (Value != 0.0f))
+		{
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			AddMovementInput(Direction, Value);
+			bRStay = false;
+		}
+		else
+		{
+			bRStay = true;
+		}
 	}
+}
+
+
+void APrototipoCharacter::Run()
+{
+	CharacterMovement->MaxWalkSpeed = 2000;
+	bResistence = true;
+}
+
+void APrototipoCharacter::NotRun()
+{
+	CharacterMovement->MaxWalkSpeed = 600;
+	bResistence = false;
+}
+
+void APrototipoCharacter::JumpCheck()
+{
+	bJump = true;
+}
+
+void APrototipoCharacter::Attack()
+{
+	if (M_Attack && !bAttack && !bJump)
+	{
+		rnum = FMath::RandRange(1, 2);
+
+		if (rnum == anum)
+		{
+			Attack();
+		}
+
+		anum = rnum;
+
+		switch (rnum)
+		{
+		case 1:
+			PlayAnimMontage(M_Attack, 1, NAME_None);
+			break;
+		case 2:
+			PlayAnimMontage(M_Attack2, 1, NAME_None);
+			break;
+		default:
+			break;
+		}
+
+		bAttack = true;
+
+		GetWorld()->GetTimerManager().SetTimer(FAttack, this, &APrototipoCharacter::AttackActive, TimeAttack, false);
+
+	}
+}
+
+void APrototipoCharacter::Defence()
+{
+	if (!bAttack && !bDefence && !bJump)
+	{
+		bDefence = true;
+
+		CharacterMovement->MaxWalkSpeed = 100;
+		bResistence = false;
+		bAttack = true;
+	}
+}
+
+void APrototipoCharacter::Defenceoff()
+{
+	if (bAttack && bDefence)
+	{
+
+		bDefence = false;
+		GetWorld()->GetTimerManager().SetTimer(FDefence, this, &APrototipoCharacter::DefenceDesactive, 1.f, false);
+	}
+}
+
+void APrototipoCharacter::DefenceDesactive()
+{
+	CharacterMovement->MaxWalkSpeed = 600;
+	AttackActive();
+}
+
+void APrototipoCharacter::AttackActive()
+{
+	bAttack = false;
+}
+
+void APrototipoCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	print("piso");
+	bJump = false;
+}
+
+void APrototipoCharacter::vResistence(float DeltaSeconds)
+{
+	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
+	{
+		Resistence -= Down * DeltaSeconds;
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Resistence : %f") ,Resistence));
+	}
+	else if (!bResistence && Resistence <= 100)
+	{
+		Resistence += Up * DeltaSeconds;
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Resistence : %f"), Resistence));
+	}
+	else if (Resistence <= 0)
+	{
+		NotRun();
+	}
+}
+
+void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+
+	SaveGameInstance->PlayerLocation = this->GetActorLocation();
+
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, FSlot, ISlot);
+
+	print("Game Saved");
+}
+
+void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
+{
+	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+
+	SaveGameInstance = Cast <UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FSlot, ISlot));
+
+	this->SetActorLocation(SaveGameInstance->PlayerLocation);
+
+	print("Game Load");
 }

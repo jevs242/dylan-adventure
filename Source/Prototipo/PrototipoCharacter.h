@@ -98,7 +98,7 @@ private:
 	void NotRun();
 
 	void JumpCheck();
-	bool  bJump = false;
+	bool bJump = false;
 
 	bool bResistence = false, bRStay = true, bLStay = true;
 
@@ -110,6 +110,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 		int Up = 50;
+
+	UPROPERTY(EditAnywhere)
+		int SpeedRun = 1200;
 
 	class UCharacterMovementComponent* CharacterMovement = GetCharacterMovement();
 
@@ -160,15 +163,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		UAnimMontage* M_Attack2;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		UAnimMontage* M_DefenceStart;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		UAnimMontage* M_DefenceLoop;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		UAnimMontage* M_DefenceEnd;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool bDefence = false;

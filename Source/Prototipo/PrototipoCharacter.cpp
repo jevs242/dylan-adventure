@@ -127,13 +127,6 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	vResistence(DeltaSeconds);
-
-	//if (M_DefenceLoop && bDefence)
-	//{
-	//	PlayAnimMontage(M_DefenceLoop, 0.1, NAME_None);
-
-	//}
-
 }
 
 void APrototipoCharacter::MoveForward(float Value)
@@ -178,7 +171,7 @@ void APrototipoCharacter::MoveRight(float Value)
 
 void APrototipoCharacter::Run()
 {
-	CharacterMovement->MaxWalkSpeed = 2000;
+	CharacterMovement->MaxWalkSpeed = SpeedRun;
 	bResistence = true;
 }
 
@@ -260,7 +253,6 @@ void APrototipoCharacter::AttackActive()
 
 void APrototipoCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	print("piso");
 	bJump = false;
 }
 
@@ -269,12 +261,10 @@ void APrototipoCharacter::vResistence(float DeltaSeconds)
 	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
 	{
 		Resistence -= Down * DeltaSeconds;
-		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Resistence : %f") ,Resistence));
 	}
 	else if (!bResistence && Resistence <= 100)
 	{
 		Resistence += Up * DeltaSeconds;
-		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, FString::Printf(TEXT("Resistence : %f"), Resistence));
 	}
 	else if (Resistence <= 0)
 	{

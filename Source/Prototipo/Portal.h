@@ -32,7 +32,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool bTeleport = false;
+
 private:
 	FVector TargetTeleportLocation;
 
+	FTimerHandle FTeleport;
+
+	FTimerHandle FMove;
+
+	void Teleport();
+
+	void Move();
+
+	class APrototipoCharacter* Personaje;
 };

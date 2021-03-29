@@ -4,6 +4,7 @@
 #include "Portal.h"
 #include "PrototipoCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APortal::APortal()
@@ -30,6 +31,7 @@ void APortal::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetTeleportLocation = TeleportLocation->GetComponentLocation();
+	Personaje = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -39,13 +41,26 @@ void APortal::Tick(float DeltaTime)
 
 }
 
+void APortal::Teleport()
+{
+	Personaje->SetActorLocation(TargetTeleportLocation);
+	GetWorld()->GetTimerManager().SetTimer(FMove, this, &APortal::Move, 2.f, false);
+}
+
+void APortal::Move()
+{
+	bTeleport = false;//
+	Personaje->bAttack = false;
+}
+
 
 void APortal::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	APrototipoCharacter* Personaje = Cast<APrototipoCharacter>(OtherActor);
 	if (Personaje == OtherActor)
 	{
-		Personaje->SetActorLocation(TargetTeleportLocation);
+		Personaje->bAttack = true;
+		bTeleport = true;//Cambio
+		GetWorld()->GetTimerManager().SetTimer(FMove, this, &APortal::Teleport, 1.f, false);
 	}
 }
 

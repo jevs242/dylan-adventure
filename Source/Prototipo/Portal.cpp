@@ -49,7 +49,7 @@ void APortal::Teleport()
 
 void APortal::Move()
 {
-	bTeleport = false;//
+	bTeleport = false;
 	Personaje->bAttack = false;
 }
 
@@ -58,8 +58,8 @@ void APortal::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 {
 	if (Personaje == OtherActor)
 	{
+		bTeleport = true;
 		Personaje->bAttack = true;
-		bTeleport = true;//Cambio
 		GetWorld()->GetTimerManager().SetTimer(FMove, this, &APortal::Teleport, 1.f, false);
 	}
 }

@@ -293,3 +293,17 @@ void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
 
 	print("Game Load");
 }
+
+bool APrototipoCharacter::bSave() const
+{
+
+	if (!bDefence && !bAttack && !bJump)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+	
+}

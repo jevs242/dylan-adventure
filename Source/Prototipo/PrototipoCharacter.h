@@ -87,6 +87,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void LoadGame(int ISlot, FString FSlot);
 
+	UFUNCTION(BlueprintPure)
+		bool bSave() const;
+
 
 private:
 

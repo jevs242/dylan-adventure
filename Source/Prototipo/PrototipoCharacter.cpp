@@ -112,6 +112,7 @@ void APrototipoCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APrototipoCharacter::BeginOverlap);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &APrototipoCharacter::OnOverlapEnd);
 
 	if (SwordClass != nullptr)
 	{
@@ -256,6 +257,11 @@ void APrototipoCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	bJump = false;
 }
 
+void APrototipoCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	bJump = true;
+}
+
 void APrototipoCharacter::vResistence(float DeltaSeconds)
 {
 	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
@@ -306,4 +312,9 @@ bool APrototipoCharacter::bSave() const
 		return false;
 	}
 	
+}
+
+int APrototipoCharacter::GetGems() const
+{
+	return Germ;
 }

@@ -92,6 +92,13 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 }
 
+//////UI//////
+
+int APrototipoCharacter::GetGems() const
+{
+	return Germ;
+}
+
 float APrototipoCharacter::GetHealthPercent() const
 {
 	return Health / MaxHealth;
@@ -106,6 +113,8 @@ float APrototipoCharacter::GetResistencePercent() const
 {
 	return Resistence / MaxResistence;
 }
+
+///////////////////////////////////
 
 void APrototipoCharacter::BeginPlay()
 {
@@ -278,6 +287,8 @@ void APrototipoCharacter::vResistence(float DeltaSeconds)
 	}
 }
 
+////////Save////////
+
 void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 {
 	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
@@ -314,7 +325,4 @@ bool APrototipoCharacter::bSave() const
 	
 }
 
-int APrototipoCharacter::GetGems() const
-{
-	return Germ;
-}
+//////////////////////

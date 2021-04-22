@@ -96,7 +96,7 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 int APrototipoCharacter::GetGems() const
 {
-	return Germ;
+	return Gems;
 }
 
 float APrototipoCharacter::GetHealthPercent() const

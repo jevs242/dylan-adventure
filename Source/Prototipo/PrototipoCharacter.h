@@ -151,7 +151,7 @@ private:
 
 public:
 
-	int Germ = 0;
+	int Gems = 0;
 
 	void Attack();
 

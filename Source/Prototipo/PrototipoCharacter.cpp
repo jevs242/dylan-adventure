@@ -120,9 +120,6 @@ void APrototipoCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &APrototipoCharacter::BeginOverlap);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &APrototipoCharacter::OnOverlapEnd);
-
 	if (SwordClass != nullptr)
 	{
 		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);

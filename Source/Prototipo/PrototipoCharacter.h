@@ -34,12 +34,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
-	UFUNCTION()
-		void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 protected:
 	void Tick(float DeltaSeconds) override;
 
@@ -98,6 +92,10 @@ public:
 	UFUNCTION(BlueprintPure)
 		int GetGems() const;
 
+	//Jump
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool bJump = false;
 
 private:
 
@@ -107,9 +105,6 @@ private:
 
 	void Run();
 	void NotRun();
-
-	void JumpCheck();
-	bool bJump = false;
 
 	bool bResistence = false, bRStay = true, bLStay = true;
 

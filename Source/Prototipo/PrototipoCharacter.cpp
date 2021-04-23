@@ -65,10 +65,10 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APrototipoCharacter::JumpCheck);
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APrototipoCharacter::JumpCheck);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APrototipoCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APrototipoCharacter::MoveRight);
@@ -137,6 +137,8 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	vResistence(DeltaSeconds);
+
+	bJump = CharacterMovement->IsFalling();
 }
 
 void APrototipoCharacter::MoveForward(float Value)
@@ -189,11 +191,6 @@ void APrototipoCharacter::NotRun()
 {
 	CharacterMovement->MaxWalkSpeed = 600;
 	bResistence = false;
-}
-
-void APrototipoCharacter::JumpCheck()
-{
-	bJump = true;
 }
 
 void APrototipoCharacter::Attack()
@@ -261,19 +258,9 @@ void APrototipoCharacter::AttackActive()
 	bAttack = false;
 }
 
-void APrototipoCharacter::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	bJump = false;
-}
-
-void APrototipoCharacter::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	bJump = true;
-}
-
 void APrototipoCharacter::vResistence(float DeltaSeconds)
 {
-	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
+	if (bResistence && Resistence > 0 && !bRStay && !bJump && !bAttack && !bDefence || bResistence && Resistence > 0 && !bLStay && !bJump && !bAttack && !bDefence)
 	{
 		Resistence -= Down * DeltaSeconds;
 	}

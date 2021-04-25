@@ -126,7 +126,7 @@ void APrototipoCharacter::BeginPlay()
 		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Sword_r"));
 		Sword->SetOwner(this);
 	}
-
+	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 1.0f, false);
 }
 
 void APrototipoCharacter::Tick(float DeltaSeconds)
@@ -136,6 +136,7 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 	vResistence(DeltaSeconds);
 
 	bJump = CharacterMovement->IsFalling();
+	
 }
 
 void APrototipoCharacter::MoveForward(float Value)
@@ -188,6 +189,16 @@ void APrototipoCharacter::NotRun()
 {
 	CharacterMovement->MaxWalkSpeed = 600;
 	bResistence = false;
+}
+
+void APrototipoCharacter::UpdateUltimateLocation()
+{
+	if (bSave())
+	{
+		UltimateLocation = GetActorLocation();
+	}
+
+	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 3.0f, false);
 }
 
 void APrototipoCharacter::Attack()

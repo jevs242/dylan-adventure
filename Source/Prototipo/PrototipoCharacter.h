@@ -146,6 +146,13 @@ private:
 
 public:
 
+	//Location
+
+	FVector UltimateLocation;
+
+	void UpdateUltimateLocation(); 
+
+
 	int Gems = 0;
 
 	void Attack();
@@ -163,6 +170,7 @@ public:
 
 	FTimerHandle FAttack;
 	FTimerHandle FDefence;
+	FTimerHandle ULocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		UAnimMontage* M_Attack;

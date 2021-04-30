@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "Enemy.h"
+#include "PrototipoCharacter.h"
 #include "Sword.generated.h"
 
 UCLASS()
@@ -32,5 +34,12 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(EditAnywhere)
+		bool CharacterSword = true;
+
+	class APrototipoCharacter* Character;
+
+	bool bAttackEnemy = false;
 
 };

@@ -114,6 +114,11 @@ float APrototipoCharacter::GetResistencePercent() const
 	return Resistence / MaxResistence;
 }
 
+bool APrototipoCharacter::Death() const
+{
+	return bDeath;
+}
+
 ///////////////////////////////////
 
 void APrototipoCharacter::BeginPlay()
@@ -205,6 +210,7 @@ void APrototipoCharacter::Attack()
 {
 	if (M_Attack && !bAttack && !bJump)
 	{
+		bAttackActive = true;
 		rnum = FMath::RandRange(1, 2);
 
 		if (rnum == anum)
@@ -263,7 +269,13 @@ void APrototipoCharacter::DefenceDesactive()
 
 void APrototipoCharacter::AttackActive()
 {
+	bAttackActive = false;
 	bAttack = false;
+}
+
+void APrototipoCharacter::vDeath()
+{
+	bDeath = true;
 }
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)

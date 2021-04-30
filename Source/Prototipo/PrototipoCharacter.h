@@ -76,6 +76,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		float GetResistencePercent() const;
 
+	UFUNCTION(BlueprintPure)
+		bool Death() const;
+
 	//Guardar y Cargar Partida
 
 	UFUNCTION(BlueprintCallable)
@@ -187,5 +190,11 @@ public:
 	int rnum = 0;
 
 	int anum = 1;
+
+	bool bAttackActive = false;
+
+	bool bDeath = false;
+
+	void vDeath();
 };
 

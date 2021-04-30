@@ -67,6 +67,7 @@ void ASword::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 		{
 			if (!Character->bDefence && bAttackEnemy)
 			{
+				bAttackEnemy = false;
 				Character->Health -= 20;
 				if (Character->Health == 0)
 				{

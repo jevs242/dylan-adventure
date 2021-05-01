@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100;
 
+	UPROPERTY(EditAnywhere)
+		float Damage = 20;
+
 	float Health = 0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)

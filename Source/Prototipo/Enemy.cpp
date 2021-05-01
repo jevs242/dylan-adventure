@@ -114,6 +114,7 @@ void AEnemy::Attack()
 	if (SwordClass != nullptr)
 	{
 		Sword->bAttackEnemy = AttackActive;
+		Sword->Damage = Damage;
 	}
 
 }

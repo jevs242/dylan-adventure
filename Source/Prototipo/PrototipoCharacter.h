@@ -121,7 +121,11 @@ private:
 		int Up = 50;
 
 	UPROPERTY(EditAnywhere)
+		int DownAttack = 100;
+
+	UPROPERTY(EditAnywhere)
 		int SpeedRun = 1200;
+
 
 	class UCharacterMovementComponent* CharacterMovement = GetCharacterMovement();
 
@@ -146,8 +150,10 @@ private:
 	UPROPERTY(EditAnywhere)
 		class USceneComponent* SLocation;
 
-
 public:
+
+	UPROPERTY(EditAnywhere)
+		float Damage = 20;
 
 	//Location
 
@@ -163,8 +169,6 @@ public:
 	void Defence();
 
 	void Defenceoff();
-
-	void DefenceDesactive();
 
 	void AttackActive();
 
@@ -193,6 +197,8 @@ public:
 
 	bool bAttackActive = false;
 
+	bool AttackResistence = false;
+	
 	bool bDeath = false;
 
 	void vDeath();

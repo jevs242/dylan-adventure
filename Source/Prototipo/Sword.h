@@ -42,4 +42,7 @@ public:
 
 	bool bAttackEnemy = false;
 
+	float Damage;
+		
+
 };

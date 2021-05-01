@@ -146,8 +146,8 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 
 void APrototipoCharacter::MoveForward(float Value)
 {
-	if (!bAttack)
-	{
+	//if (!bAttack)
+	//{
 		if ((Controller != nullptr) && (Value != 0.0f))
 		{
 			const FRotator Rotation = Controller->GetControlRotation();
@@ -160,13 +160,13 @@ void APrototipoCharacter::MoveForward(float Value)
 		{
 			bLStay = true;
 		}
-	}
+	//}
 }
 
 void APrototipoCharacter::MoveRight(float Value)
 {
-	if (!bAttack)
-	{
+	//if (!bAttack)
+	//{
 		if ((Controller != nullptr) && (Value != 0.0f))
 		{
 			const FRotator Rotation = Controller->GetControlRotation();
@@ -180,20 +180,26 @@ void APrototipoCharacter::MoveRight(float Value)
 		{
 			bRStay = true;
 		}
-	}
+	//}
 }
 
 
 void APrototipoCharacter::Run()
 {
-	CharacterMovement->MaxWalkSpeed = SpeedRun;
-	bResistence = true;
+	if(!bAttack)
+	{
+		CharacterMovement->MaxWalkSpeed = SpeedRun;
+		bResistence = true;
+	}
 }
 
 void APrototipoCharacter::NotRun()
 {
-	CharacterMovement->MaxWalkSpeed = 600;
-	bResistence = false;
+	if (!bAttack)
+	{
+		CharacterMovement->MaxWalkSpeed = 600;
+		bResistence = false;
+	}
 }
 
 void APrototipoCharacter::UpdateUltimateLocation()
@@ -208,7 +214,7 @@ void APrototipoCharacter::UpdateUltimateLocation()
 
 void APrototipoCharacter::Attack()
 {
-	if (M_Attack && !bAttack && !bJump)
+	if (M_Attack && !bAttack && !bJump && Resistence > DownAttack)
 	{
 		bAttackActive = true;
 		rnum = FMath::RandRange(1, 2);
@@ -234,6 +240,8 @@ void APrototipoCharacter::Attack()
 
 		bAttack = true;
 
+		AttackResistence = true;
+
 		GetWorld()->GetTimerManager().SetTimer(FAttack, this, &APrototipoCharacter::AttackActive, TimeAttack, false);
 
 	}
@@ -245,7 +253,7 @@ void APrototipoCharacter::Defence()
 	{
 		bDefence = true;
 
-		CharacterMovement->MaxWalkSpeed = 100;
+		CharacterMovement->MaxWalkSpeed = 300;
 		bResistence = false;
 		bAttack = true;
 	}
@@ -257,14 +265,9 @@ void APrototipoCharacter::Defenceoff()
 	{
 
 		bDefence = false;
-		GetWorld()->GetTimerManager().SetTimer(FDefence, this, &APrototipoCharacter::DefenceDesactive, 1.f, false);
+		CharacterMovement->MaxWalkSpeed = 600;
+		AttackActive();
 	}
-}
-
-void APrototipoCharacter::DefenceDesactive()
-{
-	CharacterMovement->MaxWalkSpeed = 600;
-	AttackActive();
 }
 
 void APrototipoCharacter::AttackActive()
@@ -280,7 +283,7 @@ void APrototipoCharacter::vDeath()
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)
 {
-	if (bResistence && Resistence > 0 && !bRStay && !bJump && !bAttack && !bDefence || bResistence && Resistence > 0 && !bLStay && !bJump && !bAttack && !bDefence)
+	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
 	{
 		Resistence -= Down * DeltaSeconds;
 	}
@@ -291,6 +294,15 @@ void APrototipoCharacter::vResistence(float DeltaSeconds)
 	else if (Resistence <= 0)
 	{
 		NotRun();
+	}
+	
+	if(bAttack)
+	{
+		if(AttackResistence)
+		{
+			Resistence -= DownAttack;
+			AttackResistence = false;
+		}
 	}
 }
 

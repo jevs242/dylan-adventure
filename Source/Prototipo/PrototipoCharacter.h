@@ -189,7 +189,7 @@ public:
 		bool bDefence = false;
 
 	UPROPERTY(EditAnywhere)
-		float TimeAttack = 1.3;
+		float TimeAttack = 1.0;
 
 	int rnum = 0;
 

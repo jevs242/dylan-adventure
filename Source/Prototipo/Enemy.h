@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		float GetHealthPercent() const;
 
+	UFUNCTION(BlueprintPure)
+		bool GetDead() const;
+	
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100;
 
@@ -51,6 +54,8 @@ public:
 protected:
 
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 
 	void MoveForward(float Value);
 
@@ -96,5 +101,7 @@ public:
 	void DestroyEnemy();
 
 	FTimerHandle FDeath;
+
+	bool See = false;
 
 };

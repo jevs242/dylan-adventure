@@ -134,6 +134,11 @@ float AEnemy::GetHealthPercent() const
 	return Health / MaxHealth;
 }
 
+bool AEnemy::GetDead() const
+{
+	return bDeath;
+}
+
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -146,6 +151,16 @@ void AEnemy::BeginPlay()
 		Sword->SetOwner(this);
 	}
 
+}
+
+void AEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if(!bDeath && See)
+	{		
+		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+		RotatorEnemy(PlayerPawn->GetActorLocation());
+	}
 }
 
 void AEnemy::MoveForward(float Value)

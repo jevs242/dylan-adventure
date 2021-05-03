@@ -31,7 +31,7 @@ void APortal::BeginPlay()
 {
 	Super::BeginPlay();
 	TargetTeleportLocation = TeleportLocation->GetComponentLocation();
-	Personaje = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Character = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
 // Called every frame
@@ -43,23 +43,24 @@ void APortal::Tick(float DeltaTime)
 
 void APortal::Teleport()
 {
-	Personaje->SetActorLocation(TargetTeleportLocation);
+	Character->IslandNumber = IslandNumber;
+	Character->SetActorLocation(TargetTeleportLocation);
 	GetWorld()->GetTimerManager().SetTimer(FMove, this, &APortal::Move, 2.f, false);
 }
 
 void APortal::Move()
 {
 	bTeleport = false;
-	Personaje->bAttack = false;
+	Character->bAttack = false;
 }
 
 
 void APortal::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Personaje == OtherActor)
+	if (Character == OtherActor)
 	{
 		bTeleport = true;
-		Personaje->bAttack = true;
+		Character->bAttack = true;
 		GetWorld()->GetTimerManager().SetTimer(FMove, this, &APortal::Teleport, 1.f, false);
 	}
 }

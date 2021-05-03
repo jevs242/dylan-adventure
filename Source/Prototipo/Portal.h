@@ -36,6 +36,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool bTeleport = false;
 
+	UPROPERTY(EditAnywhere)
+		int IslandNumber = 0;
+
 private:
 	FVector TargetTeleportLocation;
 
@@ -47,5 +50,5 @@ private:
 
 	void Move();
 
-	class APrototipoCharacter* Personaje;
+	class APrototipoCharacter* Character;
 };

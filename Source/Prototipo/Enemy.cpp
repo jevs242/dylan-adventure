@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Enemy.h"
+
+#include "EnemyAIController.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -45,6 +47,10 @@ AEnemy::AEnemy()
 	DropObject->SetupAttachment(RootComponent);
 
 	Health = MaxHealth;
+	
+	AIControllerClass = AEnemyAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	
 }
 
 void AEnemy::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -71,7 +77,7 @@ void AEnemy::Death()
 	bDeath = true;
 	DetachFromControllerPendingDestroy();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	if (SpawnObject != NULL)
+	if (SpawnObject != NULL && !Ok)
 	{
 		FActorSpawnParameters SpawnParams;
 
@@ -80,6 +86,7 @@ void AEnemy::Death()
 
 		AGem* Gem = GetWorld()->SpawnActor<AGem>
 			(SpawnObject, SpawnLocation, Spawnrotation, SpawnParams);
+		Ok = true;
 	}
 	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &AEnemy::DestroyEnemy, 10.0f, false);
 }

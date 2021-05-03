@@ -202,5 +202,10 @@ public:
 	bool bDeath = false;
 
 	void vDeath();
+
+	UPROPERTY(EditAnywhere)
+		FVector CoordinatesIsland[3];
+
+	int IslandNumber = 0;
 };
 

@@ -104,4 +104,6 @@ public:
 
 	bool See = false;
 
+	bool Ok = false;
+
 };

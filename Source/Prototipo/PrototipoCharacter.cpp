@@ -146,8 +146,8 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 
 void APrototipoCharacter::MoveForward(float Value)
 {
-	//if (!bAttack)
-	//{
+	if(!bDeath)
+	{	
 		if ((Controller != nullptr) && (Value != 0.0f))
 		{
 			const FRotator Rotation = Controller->GetControlRotation();
@@ -160,13 +160,14 @@ void APrototipoCharacter::MoveForward(float Value)
 		{
 			bLStay = true;
 		}
-	//}
+	}
+
 }
 
 void APrototipoCharacter::MoveRight(float Value)
 {
-	//if (!bAttack)
-	//{
+	if(!bDeath)
+	{
 		if ((Controller != nullptr) && (Value != 0.0f))
 		{
 			const FRotator Rotation = Controller->GetControlRotation();
@@ -180,7 +181,8 @@ void APrototipoCharacter::MoveRight(float Value)
 		{
 			bRStay = true;
 		}
-	//}
+	}
+	
 }
 
 
@@ -279,6 +281,10 @@ void APrototipoCharacter::AttackActive()
 void APrototipoCharacter::vDeath()
 {
 	bDeath = true;
+	//Timer
+	SetActorLocation(CoordinatesIsland[IslandNumber]);
+	bDeath = false;
+	Health = MaxHealth;
 }
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)

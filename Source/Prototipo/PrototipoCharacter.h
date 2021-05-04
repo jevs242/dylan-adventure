@@ -69,6 +69,10 @@ public:
 	UPROPERTY(VisibleAnywhere)
 		float Health;
 
+	bool bHeal = false;
+
+	bool Healok = false;
+	
 	UFUNCTION(BlueprintPure)
 		bool AttackAnim() const;
 	//Resistencia
@@ -131,6 +135,14 @@ private:
 
 	//Vida
 
+	void vHeal(float DeltaSeconds);
+
+	void vHealTime();
+
+	UPROPERTY(EditAnywhere)
+		float HealTime = 2.5f;
+
+	
 	UPROPERTY(EditAnywhere)
 		float MaxHealth = 100;
 
@@ -176,6 +188,7 @@ public:
 		bool bAttack = false;
 
 	FTimerHandle FAttack;
+	FTimerHandle FHeal;
 	FTimerHandle FDefence;
 	FTimerHandle ULocation;
 
@@ -207,5 +220,7 @@ public:
 		FVector CoordinatesIsland[3];
 
 	int IslandNumber = 0;
+
+	bool  Battle = false;
 };
 

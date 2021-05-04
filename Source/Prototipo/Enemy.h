@@ -34,6 +34,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		float GetHealthPercent() const;
 
+	UFUNCTION(BlueprintCallable)
+		void EnemyHeal();
+
 	UFUNCTION(BlueprintPure)
 		bool GetDead() const;
 	

@@ -141,6 +141,11 @@ float AEnemy::GetHealthPercent() const
 	return Health / MaxHealth;
 }
 
+void AEnemy::EnemyHeal()
+{
+	Health = MaxHealth;
+}
+
 bool AEnemy::GetDead() const
 {
 	return bDeath;

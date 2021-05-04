@@ -140,6 +140,8 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 
 	vResistence(DeltaSeconds);
 
+	vHeal(DeltaSeconds);
+	
 	bJump = CharacterMovement->IsFalling();
 	
 }
@@ -204,6 +206,28 @@ void APrototipoCharacter::NotRun()
 	}
 }
 
+void APrototipoCharacter::vHeal(float DeltaSeconds)
+{
+	if(!Battle)
+	{
+		if (Health <= 100 && bHeal)
+		{
+			Health += Down * DeltaSeconds;
+		}
+		else if(Health <= 100 && !Healok)
+		{
+			GetWorld()->GetTimerManager().SetTimer(FHeal, this, &APrototipoCharacter::vHealTime, HealTime, false);
+			Healok = true;
+		}
+
+	}
+}
+
+void APrototipoCharacter::vHealTime()
+{
+	bHeal = true;
+}
+
 void APrototipoCharacter::UpdateUltimateLocation()
 {
 	if (bSave())
@@ -254,7 +278,6 @@ void APrototipoCharacter::Defence()
 	if (!bAttack && !bDefence && !bJump)
 	{
 		bDefence = true;
-
 		CharacterMovement->MaxWalkSpeed = 300;
 		bResistence = false;
 		bAttack = true;
@@ -265,7 +288,6 @@ void APrototipoCharacter::Defenceoff()
 {
 	if (bAttack && bDefence)
 	{
-
 		bDefence = false;
 		CharacterMovement->MaxWalkSpeed = 600;
 		AttackActive();

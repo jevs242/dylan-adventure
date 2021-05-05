@@ -56,7 +56,6 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 
 void ASpawner::Spawn()
 {
-
 	if (SpawnObject != NULL)
 	{
 		if(AmountEnemy >= 1)
@@ -97,6 +96,17 @@ bool ASpawner::vBattle() const
 	return Battle;
 }
 
+bool ASpawner::vDeath() const
+{
+	return CharacterD->bDeath;
+}
+
+bool ASpawner::vRevive() const
+{
+	return bRevive;
+}
+
+
 // Called when the game starts or when spawned
 void ASpawner::BeginPlay()
 {
@@ -104,7 +114,7 @@ void ASpawner::BeginPlay()
 	
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ASpawner::BeginOverlap);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd);
-	//Character = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	CharacterD = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	Spawn();
 }
 
@@ -112,6 +122,5 @@ void ASpawner::BeginPlay()
 void ASpawner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

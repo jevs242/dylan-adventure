@@ -303,6 +303,7 @@ void APrototipoCharacter::AttackActive()
 void APrototipoCharacter::vDeath()
 {
 	bDeath = true;
+	bRevive = true;
 	//Timer
 	SetActorLocation(CoordinatesIsland[IslandNumber]);
 	bDeath = false;

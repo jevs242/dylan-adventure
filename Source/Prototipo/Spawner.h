@@ -41,7 +41,8 @@ public:
 	UPROPERTY(EditAnywhere ,BlueprintReadOnly)
 		class USceneComponent* Spawn5;
 
-	void Spawn();
+	UFUNCTION(BlueprintCallable)
+		void Spawn();
 
 	void FSpawn(USceneComponent* SpawnScene);
 
@@ -54,9 +55,17 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool vBattle() const;
 
-	//class APrototipoCharacter* Character;
+	UFUNCTION(BlueprintPure)
+		bool vDeath() const;
+
+	UFUNCTION(BlueprintPure)
+		bool vRevive() const;
+
+	class APrototipoCharacter* CharacterD;
 
 	bool Battle = false;
+
+	bool bRevive = false;
 
 protected:
 	// Called when the game starts or when spawned

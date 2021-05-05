@@ -187,6 +187,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool bAttack = false;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool bRevive = false;
+	
 	FTimerHandle FAttack;
 	FTimerHandle FHeal;
 	FTimerHandle FDefence;

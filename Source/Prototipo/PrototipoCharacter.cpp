@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Misc/OutputDeviceNull.h"
 
 #define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
 #define log(x) UE_LOG(LogTemp, Error, TEXT(x));
@@ -97,6 +98,11 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 int APrototipoCharacter::GetGems() const
 {
 	return Gems;
+}
+
+bool APrototipoCharacter::GetDefence() const
+{
+	return bDefence;
 }
 
 float APrototipoCharacter::GetHealthPercent() const
@@ -300,14 +306,25 @@ void APrototipoCharacter::AttackActive()
 	bAttack = false;
 }
 
+void APrototipoCharacter::TeleportDeath()
+{
+	FOutputDeviceNull ar;
+	
+	this->CallFunctionByNameWithArguments(TEXT("RevivePlayer"), ar, NULL, true);
+	SetActorLocation(CoordinatesIsland[IslandNumber]);
+	Health = MaxHealth;
+	bRevive = true;
+
+}
+
 void APrototipoCharacter::vDeath()
 {
+	FOutputDeviceNull ar;
+	
 	bDeath = true;
-	bRevive = true;
-	//Timer
-	SetActorLocation(CoordinatesIsland[IslandNumber]);
-	bDeath = false;
-	Health = MaxHealth;
+	this->CallFunctionByNameWithArguments(TEXT("DeathPlayer") , ar , NULL , true);
+	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &APrototipoCharacter::TeleportDeath, 4.0f, false);
+	
 }
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)
@@ -327,7 +344,7 @@ void APrototipoCharacter::vResistence(float DeltaSeconds)
 	
 	if(bAttack)
 	{
-		if(AttackResistence)
+		if(AttackResistence && Resistence > DownAttack)
 		{
 			Resistence -= DownAttack;
 			AttackResistence = false;

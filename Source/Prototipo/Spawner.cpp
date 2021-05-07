@@ -103,7 +103,7 @@ bool ASpawner::vDeath() const
 
 bool ASpawner::vRevive() const
 {
-	return bRevive;
+	return CharacterD->bRevive;
 }
 
 

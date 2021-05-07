@@ -53,6 +53,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool bDeath = false;
+	
 
 protected:
 

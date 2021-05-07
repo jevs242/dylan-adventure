@@ -173,6 +173,11 @@ void AEnemy::Tick(float DeltaTime)
 		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 		RotatorEnemy(PlayerPawn->GetActorLocation());
 	}
+
+	if(Character->bDeath)
+	{
+		//DetachFromControllerPendingDestroy();
+	}
 }
 
 void AEnemy::MoveForward(float Value)

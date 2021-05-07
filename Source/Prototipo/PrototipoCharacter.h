@@ -61,6 +61,8 @@ public:
 
 public:
 
+	UFUNCTION(BlueprintPure)
+		bool GetDefence() const;
 	//Vida
 
 	UFUNCTION(BlueprintPure)
@@ -194,6 +196,7 @@ public:
 	FTimerHandle FHeal;
 	FTimerHandle FDefence;
 	FTimerHandle ULocation;
+	FTimerHandle FDeath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		UAnimMontage* M_Attack;
@@ -214,8 +217,11 @@ public:
 	bool bAttackActive = false;
 
 	bool AttackResistence = false;
-	
-	bool bDeath = false;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool bDeath = false;
+
+	void TeleportDeath();
 
 	void vDeath();
 
@@ -225,5 +231,6 @@ public:
 	int IslandNumber = 0;
 
 	bool  Battle = false;
+
 };
 

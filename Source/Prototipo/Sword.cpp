@@ -2,7 +2,6 @@
 
 
 #include "Sword.h"
-
 #include "Kismet/GameplayStatics.h"
 
 
@@ -71,6 +70,7 @@ void ASword::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 				if (Character->Health <= 0)
 				{
 					Character->vDeath();
+
 				}
 			}
 

@@ -2,6 +2,9 @@
 
 
 #include "Spawner.h"
+
+#include "Misc/OutputDeviceNull.h"
+
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -30,6 +33,9 @@ ASpawner::ASpawner()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetupAttachment(RootComponent);
 
+	OutBoxRespawn = CreateDefaultSubobject<UBoxComponent>(TEXT("OutBoxRespawn"));
+	OutBoxRespawn->SetupAttachment(RootComponent);
+
 }
 
 void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -52,6 +58,18 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 		Character->Healok = false;
 		Character->bHeal = false;
 	}
+}
+
+void ASpawner::OnOverlapEnd2(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex)
+{
+	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
+	if (Character)
+	{		
+		FOutputDeviceNull ar;
+
+		this->CallFunctionByNameWithArguments(TEXT("Respawns"), ar, NULL, true);
+	}
+
 }
 
 void ASpawner::Spawn()
@@ -114,6 +132,9 @@ void ASpawner::BeginPlay()
 	
 	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ASpawner::BeginOverlap);
 	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd);
+
+	OutBoxRespawn->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd2);
+	
 	CharacterD = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	Spawn();
 }

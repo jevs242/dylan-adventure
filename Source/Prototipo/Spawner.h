@@ -20,11 +20,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class UBoxComponent* BoxCollision;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class UBoxComponent* OutBoxRespawn;
+
 	UFUNCTION()
 		void BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	//UFUNCTION()
+	//	void BeginOverlap2(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnOverlapEnd2(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere , BlueprintReadOnly)
 		class USceneComponent* Spawn1;
@@ -66,6 +75,8 @@ public:
 	bool Battle = false;
 
 	bool bRevive = false;
+
+	bool OutBox = false;
 
 protected:
 	// Called when the game starts or when spawned

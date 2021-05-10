@@ -43,6 +43,7 @@ void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if(Character)
 	{
+		Character->EnemyWaves = AmountEnemy;
 		Battle = true;
 		Character-> Battle = true;
 	}
@@ -53,6 +54,12 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if(Character)
 	{
+		//if(Character->EnemyKill == AmountEnemy)
+		//{
+		//	
+		//}
+/*		Character->Waves = Waves*///;
+		
 		Battle = false;
 		Character->Battle = false;
 		Character->Healok = false;

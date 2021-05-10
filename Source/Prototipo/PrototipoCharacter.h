@@ -96,6 +96,13 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool bSave() const;
 
+	UFUNCTION(BlueprintPure)
+		bool vJump() const;
+	
+	UFUNCTION(BlueprintPure)
+		bool vRevive() const;
+	
+
 	//Germ
 
 	UFUNCTION(BlueprintPure)
@@ -231,6 +238,18 @@ public:
 	int IslandNumber = 0;
 
 	bool  Battle = false;
+
+	int EnemyKill = 0 ;
+	
+	int EnemyWaves = 0 , Waves = 0;
+
+	bool WavesComplete[5] = {false};
+
+	void viWavesComplete(int iWaves);
+
+	void vWavesComplete();
+
+	void Cancelstreak(int iWaves);
 
 };
 

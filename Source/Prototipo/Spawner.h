@@ -29,9 +29,6 @@ public:
 	UFUNCTION()
 		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	//UFUNCTION()
-	//	void BeginOverlap2(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	UFUNCTION()
 		void OnOverlapEnd2(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
@@ -77,6 +74,9 @@ public:
 	bool bRevive = false;
 
 	bool OutBox = false;
+
+	UPROPERTY(EditAnywhere)
+		int Waves = 0;
 
 protected:
 	// Called when the game starts or when spawned

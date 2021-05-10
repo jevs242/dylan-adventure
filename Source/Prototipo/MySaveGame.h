@@ -20,4 +20,10 @@ public:
 	UPROPERTY(EditAnywhere)
 		FVector PlayerLocation;
 
+	UPROPERTY(EditAnywhere)
+		int Gems;
+
+	UPROPERTY(EditAnywhere)
+		int IslandNumber;
+
 };

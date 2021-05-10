@@ -149,6 +149,7 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 	vHeal(DeltaSeconds);
 	
 	bJump = CharacterMovement->IsFalling();
+
 	
 }
 
@@ -322,9 +323,39 @@ void APrototipoCharacter::vDeath()
 	FOutputDeviceNull ar;
 	
 	bDeath = true;
+
+	
+	Cancelstreak(Waves);
 	this->CallFunctionByNameWithArguments(TEXT("DeathPlayer") , ar , NULL , true);
 	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &APrototipoCharacter::TeleportDeath, 4.0f, false);
 	
+}
+
+void APrototipoCharacter::viWavesComplete(int iWaves)
+{
+	if (WavesComplete[iWaves] == false)
+	{
+		WavesComplete[iWaves] = true;	
+	}
+}
+
+void APrototipoCharacter::vWavesComplete()
+{
+	if (Waves >= 1 || Waves <= 2)
+	{
+		if (EnemyKill == EnemyWaves)
+		{
+			viWavesComplete(Waves);
+		}
+	}
+}
+
+void APrototipoCharacter::Cancelstreak(int iWaves)
+{
+	if (WavesComplete[iWaves] == false)
+	{
+		EnemyKill = 0;
+	}
 }
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)
@@ -359,6 +390,8 @@ void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
 
 	SaveGameInstance->PlayerLocation = this->GetActorLocation();
+	SaveGameInstance->Gems = Gems;
+	SaveGameInstance->IslandNumber = IslandNumber;
 
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, FSlot, ISlot);
 
@@ -372,6 +405,9 @@ void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
 	SaveGameInstance = Cast <UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FSlot, ISlot));
 
 	this->SetActorLocation(SaveGameInstance->PlayerLocation);
+	Gems = SaveGameInstance->Gems;
+	IslandNumber = SaveGameInstance->IslandNumber;
+	
 
 	print("Game Load");
 }
@@ -379,7 +415,7 @@ void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
 bool APrototipoCharacter::bSave() const
 {
 
-	if (!bDefence && !bAttack && !bJump)
+	if (!bDefence && !bAttack && !bJump && !bDeath && !Battle)
 	{
 		return true;
 	}
@@ -388,6 +424,23 @@ bool APrototipoCharacter::bSave() const
 		return false;
 	}
 	
+}
+
+bool APrototipoCharacter::vJump() const
+{
+	if (!bDefence && !bAttack && !bJump && !bDeath)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool APrototipoCharacter::vRevive() const
+{
+	return bRevive;
 }
 
 //////////////////////

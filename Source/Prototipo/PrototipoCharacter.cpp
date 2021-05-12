@@ -14,6 +14,8 @@
 
 #define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
 #define log(x) UE_LOG(LogTemp, Error, TEXT(x));
+#define string(x) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, FString::Printf(TEXT("Here : %s"), (x).ToString());
+
 
 APrototipoCharacter::APrototipoCharacter()
 {
@@ -156,7 +158,7 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 void APrototipoCharacter::MoveForward(float Value)
 {
 	if(!bDeath)
-	{	
+	{
 		if ((Controller != nullptr) && (Value != 0.0f))
 		{
 			const FRotator Rotation = Controller->GetControlRotation();

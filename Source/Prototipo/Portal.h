@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere)
 		int IslandNumber = 0;
 
+	UPROPERTY(EditAnywhere)
+		int Waves = 0;
+
 private:
 	FVector TargetTeleportLocation;
 

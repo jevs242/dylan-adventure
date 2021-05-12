@@ -46,6 +46,7 @@ void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		Character->EnemyWaves = AmountEnemy;
 		Battle = true;
 		Character-> Battle = true;
+		Character->Waves = Waves;
 	}
 }
 
@@ -53,13 +54,7 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 {
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if(Character)
-	{
-		//if(Character->EnemyKill == AmountEnemy)
-		//{
-		//	
-		//}
-/*		Character->Waves = Waves*///;
-		
+	{	
 		Battle = false;
 		Character->Battle = false;
 		Character->Healok = false;
@@ -123,7 +118,15 @@ bool ASpawner::vBattle() const
 
 bool ASpawner::vDeath() const
 {
-	return CharacterD->bDeath;
+	if(CharacterD!= NULL)
+	{
+		return CharacterD->bDeath;
+		
+	}
+	else
+	{
+		return true;
+	}
 }
 
 bool ASpawner::vRevive() const

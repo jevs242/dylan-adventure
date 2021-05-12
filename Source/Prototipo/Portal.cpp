@@ -57,7 +57,7 @@ void APortal::Move()
 
 void APortal::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Character == OtherActor)
+	if (Character == OtherActor && Character->WavesComplete[Waves] || Character == OtherActor && Waves == 0)
 	{
 		bTeleport = true;
 		Character->bAttack = true;

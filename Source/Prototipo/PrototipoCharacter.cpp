@@ -343,7 +343,7 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 
 void APrototipoCharacter::vWavesComplete()
 {
-	if (Waves >= 1 || Waves <= 2)
+	if (Waves >= 1 || Waves <= 6)
 	{
 		if (EnemyKill == EnemyWaves)
 		{

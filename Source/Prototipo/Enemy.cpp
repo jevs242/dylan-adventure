@@ -151,6 +151,26 @@ bool AEnemy::GetDead() const
 	return bDeath;
 }
 
+void AEnemy::vDestroySword()
+{
+	if (SwordClass != nullptr)
+	{
+		Sword->Destroy();
+	}
+}
+
+int AEnemy::vNumberSpawnPast()
+{
+	
+	return Character->NumberSpawnPast;
+}
+
+int AEnemy::vNumberSpawn()
+{
+	return NumberSpawn;
+}
+
+
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();

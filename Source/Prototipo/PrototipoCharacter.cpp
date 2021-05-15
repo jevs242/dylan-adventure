@@ -360,6 +360,11 @@ void APrototipoCharacter::Cancelstreak(int iWaves)
 	}
 }
 
+int APrototipoCharacter::vNumberSpawn()
+{
+	return NumberSpawn;
+}
+
 void APrototipoCharacter::vResistence(float DeltaSeconds)
 {
 	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)

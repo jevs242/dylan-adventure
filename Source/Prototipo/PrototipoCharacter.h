@@ -251,5 +251,12 @@ public:
 
 	void Cancelstreak(int iWaves);
 
+	int NumberSpawn = 0;
+
+	int NumberSpawnPast = 0;
+
+	UFUNCTION(BlueprintPure)
+	int vNumberSpawn();
+
 };
 

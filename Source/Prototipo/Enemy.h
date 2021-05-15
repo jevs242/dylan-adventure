@@ -53,7 +53,17 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 		bool bDeath = false;
-	
+
+	UFUNCTION(BlueprintCallable)
+		void vDestroySword();
+
+	UFUNCTION(BlueprintPure)
+	int vNumberSpawnPast();
+
+	int NumberSpawn = 0;
+
+	UFUNCTION(BlueprintPure)
+		int vNumberSpawn();
 
 protected:
 

@@ -78,6 +78,17 @@ public:
 	UPROPERTY(EditAnywhere)
 		int Waves = 0;
 
+	UPROPERTY(EditAnywhere)
+		int NumberSpawn = 0;
+
+	UFUNCTION(BlueprintPure)
+	int vNumberSpawn();
+
+	UFUNCTION(BlueprintPure)
+		int vNumberSpawnPast();
+	
+	UFUNCTION(BlueprintPure)
+		int vNumberSpawnCharacter();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

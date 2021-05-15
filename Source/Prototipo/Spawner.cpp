@@ -43,6 +43,7 @@ void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if(Character)
 	{
+		Character->NumberSpawn = NumberSpawn;
 		Character->EnemyWaves = AmountEnemy;
 		Battle = true;
 		Character-> Battle = true;
@@ -59,6 +60,8 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 		Character->Battle = false;
 		Character->Healok = false;
 		Character->bHeal = false;
+		Character->NumberSpawnPast = NumberSpawn;
+		Character->NumberSpawn = 0;
 	}
 }
 
@@ -109,6 +112,8 @@ void ASpawner::FSpawn(USceneComponent* SpawnScene)
 	FRotator Spawnrotation = FRotator::ZeroRotator;
 	AEnemy* Enemy = GetWorld()->SpawnActor<AEnemy>
 		(SpawnObject, SpawnLocation, Spawnrotation, SpawnParams);
+
+	Enemy->NumberSpawn = NumberSpawn;
 }
 
 bool ASpawner::vBattle() const
@@ -134,6 +139,21 @@ bool ASpawner::vRevive() const
 	return CharacterD->bRevive;
 }
 
+
+int ASpawner::vNumberSpawn()
+{
+	return NumberSpawn;
+}
+
+int ASpawner::vNumberSpawnPast()
+{
+	return CharacterD->NumberSpawnPast;
+}
+
+int ASpawner::vNumberSpawnCharacter()
+{
+	return CharacterD->NumberSpawn;
+}
 
 // Called when the game starts or when spawned
 void ASpawner::BeginPlay()

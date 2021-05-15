@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//BTService_PlayerLocation.h
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_PlayerLocation.generated.h"
 
-/**
- *
- */
 UCLASS()
 class PROTOTIPO_API UBTService_PlayerLocation : public UBTService_BlackboardBase
 {
@@ -19,5 +17,4 @@ public:
 
 protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds);
-
 };

@@ -170,7 +170,6 @@ int AEnemy::vNumberSpawn()
 	return NumberSpawn;
 }
 
-
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();

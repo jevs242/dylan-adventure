@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//BTTask_See.cpp
 
 #include "BTTask_See.h"
 #include "AIController.h"
@@ -15,7 +15,6 @@ UBTTask_See::UBTTask_See()
 
 EBTNodeResult::Type UBTTask_See::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	if (OwnerComp.GetAIOwner() == nullptr)
@@ -30,7 +29,6 @@ EBTNodeResult::Type UBTTask_See::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	}
 
 	Character->See = true;
-
 
 	return EBTNodeResult::Succeeded;
 }

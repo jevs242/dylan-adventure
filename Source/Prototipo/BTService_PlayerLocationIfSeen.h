@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//BTService_PlayerLocationIfSeen.h
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_PlayerLocationIfSeen.generated.h"
 
-/**
- *
- */
 UCLASS()
 class PROTOTIPO_API UBTService_PlayerLocationIfSeen : public UBTService_BlackboardBase
 {

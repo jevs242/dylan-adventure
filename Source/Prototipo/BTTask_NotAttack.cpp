@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//BTTask_NotAttack.cpp
 
 #include "BTTask_NotAttack.h"
-
-
 #include "AIController.h"
 #include "Enemy.h"
 #include "PrototipoCharacter.h"
@@ -17,7 +15,6 @@ UBTTask_NotAttack::UBTTask_NotAttack()
 
 EBTNodeResult::Type UBTTask_NotAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	if (OwnerComp.GetAIOwner() == nullptr)
@@ -32,7 +29,6 @@ EBTNodeResult::Type UBTTask_NotAttack::ExecuteTask(UBehaviorTreeComponent& Owner
 	}
 
 	Character->NotAttack();
-
 
 	return EBTNodeResult::Succeeded;
 }

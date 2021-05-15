@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//BTTask_ClearBlackBoardValue.cpp
 
 #include "BTTask_ClearBlackBoardValue.h"
 

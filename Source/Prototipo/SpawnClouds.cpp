@@ -1,20 +1,13 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//SpawnClouds.cpp
 
 #include "SpawnClouds.h"
 
-
-#define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
-#define log(x) UE_LOG(LogTemp, Error, TEXT(x));
-
-// Sets default values
 ASpawnClouds::ASpawnClouds()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-
 
 	Cloud1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cloud1"));
 	Cloud1->SetupAttachment(RootComponent);
@@ -51,14 +44,6 @@ ASpawnClouds::ASpawnClouds()
 	MinY->SetupAttachment(RootComponent);
 }
 
-
-// Called when the game starts or when spawned
-void ASpawnClouds::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
 void ASpawnClouds::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -71,9 +56,7 @@ void ASpawnClouds::Tick(float DeltaTime)
 	MoveClouds(DeltaTime, Cloud6);
 	MoveClouds(DeltaTime, Cloud7);
 	MoveClouds(DeltaTime, Cloud8);
-
 }
-
 
 void ASpawnClouds::MoveClouds(float DeltaTime, UStaticMeshComponent* Clouds)
 {

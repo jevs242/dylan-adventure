@@ -1,8 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//BTTask_Attack.cpp
 
 #include "BTTask_Attack.h"
-
 #include "AIController.h"
 #include "Enemy.h"
 #include "PrototipoCharacter.h"
@@ -30,7 +29,6 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	}
 
 	Character->Attack();
-
 
 	return EBTNodeResult::Succeeded;
 }

@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//BTTask_Attack.h
 
 #pragma once
 
@@ -6,9 +7,6 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_Attack.generated.h"
 
-/**
- *
- */
 UCLASS()
 class PROTOTIPO_API UBTTask_Attack : public UBTTaskNode
 {

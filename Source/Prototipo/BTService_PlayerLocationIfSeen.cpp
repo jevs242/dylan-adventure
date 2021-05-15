@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//BTService_PlayerLocationIfSeen.cpp
 
 
 #include "BTService_PlayerLocationIfSeen.h"
@@ -35,5 +36,4 @@ void UBTService_PlayerLocationIfSeen::TickNode(UBehaviorTreeComponent& OwnerComp
 	{
 		OwnerComp.GetBlackboardComponent()->ClearValue(GetSelectedBlackboardKey());
 	}
-
 }

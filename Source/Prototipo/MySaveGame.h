@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//MySaveGame.h
 
 #pragma once
 
@@ -25,5 +26,4 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		int IslandNumber;
-
 };

@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 
 
+#define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
+#define log(x) UE_LOG(LogTemp, Error, TEXT(x));
 // Sets default values
 ASpawner::ASpawner()
 {
@@ -106,14 +108,17 @@ void ASpawner::Spawn()
 
 void ASpawner::FSpawn(USceneComponent* SpawnScene)
 {
-	FActorSpawnParameters SpawnParams;
+		FActorSpawnParameters SpawnParams;
 
-	FVector SpawnLocation = SpawnScene->GetComponentLocation();
-	FRotator Spawnrotation = FRotator::ZeroRotator;
-	AEnemy* Enemy = GetWorld()->SpawnActor<AEnemy>
-		(SpawnObject, SpawnLocation, Spawnrotation, SpawnParams);
+		FVector SpawnLocation = SpawnScene->GetComponentLocation();
+		FRotator Spawnrotation = FRotator::ZeroRotator;
+		AEnemy* Enemy = GetWorld()->SpawnActor<AEnemy>
+			(SpawnObject, SpawnLocation, Spawnrotation, SpawnParams);
 
-	Enemy->NumberSpawn = NumberSpawn;
+	if (Enemy != NULL)
+	{
+		Enemy->NumberSpawn = NumberSpawn;
+	}
 }
 
 bool ASpawner::vBattle() const
@@ -126,7 +131,6 @@ bool ASpawner::vDeath() const
 	if(CharacterD!= NULL)
 	{
 		return CharacterD->bDeath;
-		
 	}
 	else
 	{
@@ -136,7 +140,14 @@ bool ASpawner::vDeath() const
 
 bool ASpawner::vRevive() const
 {
-	return CharacterD->bRevive;
+	if (CharacterD != NULL)
+	{
+		return CharacterD->bRevive;
+	}
+	else
+	{
+		return true;
+	}
 }
 
 
@@ -147,12 +158,28 @@ int ASpawner::vNumberSpawn()
 
 int ASpawner::vNumberSpawnPast()
 {
-	return CharacterD->NumberSpawnPast;
+	
+	if (CharacterD != NULL)
+	{
+		return CharacterD->NumberSpawnPast;
+	}
+	else
+	{
+		print("hoola");
+		return 0;
+	}
 }
 
 int ASpawner::vNumberSpawnCharacter()
 {
-	return CharacterD->NumberSpawn;
+	if (CharacterD != NULL)
+	{
+		return CharacterD->NumberSpawn;
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 // Called when the game starts or when spawned

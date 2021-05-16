@@ -1,5 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//EnemyAIController.cpp
 
 #include "EnemyAIController.h"
 #include "Kismet/GameplayStatics.h"
@@ -10,27 +10,16 @@ void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), PlayerPawn.ToString());
-	//UE_LOG(LogTemp, Error, TEXT("%s Es el Pawn"), *PlayerPawn->GetName());
-
 	if (AIBehavior != nullptr)
 	{
 		RunBehaviorTree(AIBehavior);
 
 		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-		//GetBlackboardComponent()->SetValueAsVector(TEXT("PlayerLocation"), PlayerPawn->GetActorLocation());
-		
-		//GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"), GetPawn()->GetActorLocation());
-
+		GetWorld()->GetTimerManager().SetTimer(FStart, this, &AEnemyAIController::StartLocation, 3.f, false);
 	}
-
-
 }
 
-void AEnemyAIController::Tick(float DeltaSeconds)
+void AEnemyAIController::StartLocation()
 {
-	Super::Tick(DeltaSeconds);
-
-	//APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-	//	GetBlackboardComponent()->SetValueAsObject(TEXT("Player"), PlayerPawn);
+	GetBlackboardComponent()->SetValueAsVector(TEXT("StartLocation"),GetPawn()->GetActorLocation());
 }

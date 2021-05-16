@@ -258,5 +258,13 @@ public:
 	UFUNCTION(BlueprintPure)
 	int vNumberSpawn();
 
+	UFUNCTION(BlueprintPure)
+		FString vMissionText();
+
+	FString TextMission = "-Talk to the store owner";
+
+	UFUNCTION(BlueprintCallable)
+		void Mission(int NumMission);
+	
 };
 

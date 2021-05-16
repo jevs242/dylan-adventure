@@ -326,7 +326,6 @@ void APrototipoCharacter::vDeath()
 	
 	bDeath = true;
 
-	
 	Cancelstreak(Waves);
 	this->CallFunctionByNameWithArguments(TEXT("DeathPlayer") , ar , NULL , true);
 	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &APrototipoCharacter::TeleportDeath, 4.0f, false);
@@ -363,6 +362,16 @@ void APrototipoCharacter::Cancelstreak(int iWaves)
 int APrototipoCharacter::vNumberSpawn()
 {
 	return NumberSpawn;
+}
+
+FString APrototipoCharacter::vMissionText()
+{
+	return TextMission;
+}
+
+void APrototipoCharacter::Mission(int NumMission)
+{
+	
 }
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)

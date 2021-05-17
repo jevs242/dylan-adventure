@@ -64,6 +64,7 @@ void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 		Character->bHeal = false;
 		Character->NumberSpawnPast = NumberSpawn;
 		Character->NumberSpawn = 0;
+		Character->EnemyKill=0;
 	}
 }
 

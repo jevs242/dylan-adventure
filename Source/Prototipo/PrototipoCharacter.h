@@ -261,7 +261,9 @@ public:
 	UFUNCTION(BlueprintPure)
 		FString vMissionText();
 
-	FString TextMission = "-Talk to the store owner";
+	FString TextMission = "-Talk to the store owner about the first mission";
+
+	int NumMissionG = 0;
 
 	UFUNCTION(BlueprintCallable)
 		void Mission(int NumMission);

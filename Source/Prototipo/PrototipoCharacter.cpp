@@ -334,17 +334,29 @@ void APrototipoCharacter::vDeath()
 
 void APrototipoCharacter::viWavesComplete(int iWaves)
 {
-	if (WavesComplete[iWaves] == false)
+	if (NumMissionG == iWaves)
 	{
-		WavesComplete[iWaves] = true;	
+		if (WavesComplete[iWaves] == false)
+		{
+			WavesComplete[iWaves] = true;
+			if (WavesComplete[2])
+			{
+				TextMission = "-Go to the seller's house on the right of the island";
+			}
+			else
+			{
+				TextMission = "-Return to the store for the next mission";
+			}
+		}
 	}
+	Cancelstreak(iWaves);
 }
 
 void APrototipoCharacter::vWavesComplete()
 {
 	if (Waves >= 1 || Waves <= 6)
 	{
-		if (EnemyKill == EnemyWaves)
+		if (EnemyKill >= EnemyWaves)
 		{
 			viWavesComplete(Waves);
 		}
@@ -371,8 +383,44 @@ FString APrototipoCharacter::vMissionText()
 
 void APrototipoCharacter::Mission(int NumMission)
 {
-	
+	NumMissionG = NumMission;
+	switch (NumMission)
+	{
+	case 1:
+		if (!WavesComplete[1])
+		{
+			TextMission = "-Kill the 3 enemies on island 1";
+		}
+		break;
+	case 2:
+		if (WavesComplete[1] && !WavesComplete[2])
+		{
+			TextMission = "-Kill the 5 enemies on island 2";
+		}
+		break;
+	case 3:
+		if (WavesComplete[2] && !WavesComplete[3])
+		{
+			TextMission = "-Kill the 3 enemies on island 2";
+		}
+		break;
+	case 4:
+		if (WavesComplete[3] && !WavesComplete[4])
+		{
+			TextMission = "-Kill the 4 enemies on island 2";
+		}
+		break;
+	case 5:
+		if (WavesComplete[4] && !WavesComplete[5])
+		{
+			TextMission = "-Kill the boss on island 3";
+		}
+		break;
+	default:
+		break;
+	}
 }
+
 
 void APrototipoCharacter::vResistence(float DeltaSeconds)
 {

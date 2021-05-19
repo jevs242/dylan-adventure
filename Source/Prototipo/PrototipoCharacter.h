@@ -85,7 +85,7 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool Death() const;
 
-	//Guardar y Cargar Partida
+	//Save and Load 
 
 	UFUNCTION(BlueprintCallable)
 		void SaveGame(int ISlot, FString FSlot);
@@ -149,11 +149,11 @@ private:
 	void vHealTime();
 
 	UPROPERTY(EditAnywhere)
-		float HealTime = 2.5f;
+		int HealTime = 2.5f;
 
 	
 	UPROPERTY(EditAnywhere)
-		float MaxHealth = 100;
+		int MaxHealth = 100;
 
 	//Espada
 
@@ -233,7 +233,7 @@ public:
 	void vDeath();
 
 	UPROPERTY(EditAnywhere)
-		FVector CoordinatesIsland[3];
+		FVector CoordinatesIsland[4];
 
 	int IslandNumber = 0;
 
@@ -267,6 +267,18 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void Mission(int NumMission);
-	
+
+	//Sound
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* AttackSound;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* DamageSound;
+
+	UPROPERTY(EditAnywhere)
+		USoundBase* ShieldSound;
+
+	void vDamageSound();
 };
 

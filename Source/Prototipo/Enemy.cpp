@@ -1,7 +1,7 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+//Jose E Velazquez Sepulveda
+//Enemy.cpp
 
 #include "Enemy.h"
-
 #include "EnemyAIController.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -11,9 +11,6 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
-
-#define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
-#define log(x) UE_LOG(LogTemp, Error, TEXT(x));
 
 AEnemy::AEnemy()
 {
@@ -45,12 +42,35 @@ AEnemy::AEnemy()
 
 	DropObject = CreateDefaultSubobject<USceneComponent>(TEXT("DropObject"));
 	DropObject->SetupAttachment(RootComponent);
-
-	Health = MaxHealth;
 	
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
+}
+
+void AEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Health = MaxHealth;
+	Character = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	if (SwordClass != nullptr)
+	{
+		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("SwordSocket"));
+		Sword->SetOwner(this);
+	}
+}
+
+void AEnemy::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if(!bDeath && See)
+	{		
+		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+		RotatorEnemy(PlayerPawn->GetActorLocation());
+	}
 }
 
 void AEnemy::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
@@ -91,6 +111,7 @@ void AEnemy::Death()
 	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &AEnemy::DestroyEnemy, 10.0f, false);
 }
 
+
 void AEnemy::DestroyEnemy()
 {
 	if (SwordClass != nullptr)
@@ -110,6 +131,30 @@ void AEnemy::LookUpAtRate(float Rate)
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
+void AEnemy::MoveForward(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		AddMovementInput(Direction, Value);
+	}
+}
+
+void AEnemy::MoveRight(float Value)
+{
+	if ((Controller != nullptr) && (Value != 0.0f))
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		AddMovementInput(Direction, Value);
+	}
+}
+
+//AI
+
 void AEnemy::Attack()
 {
 	AttackActive = true;
@@ -122,8 +167,8 @@ void AEnemy::Attack()
 	{
 		Sword->bAttackEnemy = AttackActive;
 		Sword->Damage = Damage;
+		UGameplayStatics::SpawnSoundAttached(AttackSound, RootComponent, TEXT("SwordSocket"));
 	}
-
 }
 
 void AEnemy::NotAttack()
@@ -135,6 +180,8 @@ void AEnemy::NotAttack()
 		Sword->bAttackEnemy = AttackActive;
 	}
 }
+
+//Funcion Blueprint
 
 float AEnemy::GetHealthPercent() const
 {
@@ -159,64 +206,17 @@ void AEnemy::vDestroySword()
 	}
 }
 
+void AEnemy::vDamageSound()
+{
+	UGameplayStatics::SpawnSoundAttached(DamageSound, RootComponent, TEXT("SwordSocket"));
+}
+
 int AEnemy::vNumberSpawnPast()
 {
-	
 	return Character->NumberSpawnPast;
 }
 
 int AEnemy::vNumberSpawn()
 {
 	return NumberSpawn;
-}
-
-void AEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-	Character = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	if (SwordClass != nullptr)
-	{
-		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);
-		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("SwordSocket"));
-		Sword->SetOwner(this);
-	}
-
-}
-
-void AEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if(!bDeath && See)
-	{		
-		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-		RotatorEnemy(PlayerPawn->GetActorLocation());
-	}
-
-	if(Character->bDeath)
-	{
-		//DetachFromControllerPendingDestroy();
-	}
-}
-
-void AEnemy::MoveForward(float Value)
-{
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
-	}
-}
-
-void AEnemy::MoveRight(float Value)
-{
-	if ((Controller != nullptr) && (Value != 0.0f))
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
-	}
 }

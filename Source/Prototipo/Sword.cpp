@@ -34,7 +34,8 @@ void ASword::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 		if (Enemy && !Enemy->bDeath && Character->bAttackActive)
 		{
 			Character->bAttackActive = false;
-			Enemy->Health -= 50;
+			Enemy->vDamageSound();
+			Enemy->Health -= Enemy->Damage;
 			if (Enemy->Health <= 0)
 			{
 				Character->EnemyKill++;
@@ -50,6 +51,7 @@ void ASword::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 			if (!Character->bDefence && bAttackEnemy && !Character->bDeath)
 			{
 				bAttackEnemy = false;
+				Character->vDamageSound();
 				Character->Health -= Damage;
 				if (Character->Health <= 0)
 				{

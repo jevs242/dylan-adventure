@@ -1,20 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+//Jose E Velazquez Sepulveda
+//Spawner.cpp
 
 #include "Spawner.h"
-
 #include "Misc/OutputDeviceNull.h"
-
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 
-
 #define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
 #define log(x) UE_LOG(LogTemp, Error, TEXT(x));
-// Sets default values
+
 ASpawner::ASpawner()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
@@ -31,13 +27,24 @@ ASpawner::ASpawner()
 	Spawn4->SetupAttachment(RootComponent);
 	Spawn5->SetupAttachment(RootComponent);
 
-
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	BoxCollision->SetupAttachment(RootComponent);
 
 	OutBoxRespawn = CreateDefaultSubobject<UBoxComponent>(TEXT("OutBoxRespawn"));
 	OutBoxRespawn->SetupAttachment(RootComponent);
+}
 
+void ASpawner::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ASpawner::BeginOverlap);
+	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd);
+	
+	OutBoxRespawn->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd2);
+	
+	CharacterD = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	Spawn();
 }
 
 void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -45,39 +52,48 @@ void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if(Character)
 	{
+		if (BossFight && !Character->Battle)
+		{
+			UGameplayStatics::SpawnSoundAttached(BossBegin, Spawn1, TEXT("BossFight"));
+		}
 		Character->NumberSpawn = NumberSpawn;
 		Character->EnemyWaves = AmountEnemy;
 		Battle = true;
 		Character-> Battle = true;
 		Character->Waves = Waves;
+		Character->IslandNumber = 3;
 	}
 }
 
 void ASpawner::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex)
 {
-	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
-	if(Character)
-	{	
-		Battle = false;
-		Character->Battle = false;
-		Character->Healok = false;
-		Character->bHeal = false;
-		Character->NumberSpawnPast = NumberSpawn;
-		Character->NumberSpawn = 0;
-		Character->EnemyKill=0;
+	if (!BossFight)
+	{
+		APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
+		if(Character)
+		{	
+			Battle = false;
+			Character->Battle = false;
+			Character->Healok = false;
+			Character->bHeal = false;
+			Character->NumberSpawnPast = NumberSpawn;
+			Character->NumberSpawn = 0;
+			Character->EnemyKill=0;
+		}
 	}
 }
 
 void ASpawner::OnOverlapEnd2(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,int32 OtherBodyIndex)
 {
-	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
-	if (Character)
-	{		
-		FOutputDeviceNull ar;
-
-		this->CallFunctionByNameWithArguments(TEXT("Respawns"), ar, NULL, true);
+	if (!BossFight)
+	{
+		APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
+		if (Character)
+		{		
+			FOutputDeviceNull ar;
+			this->CallFunctionByNameWithArguments(TEXT("Respawns"), ar, NULL, true);
+		}
 	}
-
 }
 
 void ASpawner::Spawn()
@@ -109,18 +125,22 @@ void ASpawner::Spawn()
 
 void ASpawner::FSpawn(USceneComponent* SpawnScene)
 {
-		FActorSpawnParameters SpawnParams;
+	FActorSpawnParameters SpawnParams;
 
-		FVector SpawnLocation = SpawnScene->GetComponentLocation();
-		FRotator Spawnrotation = FRotator::ZeroRotator;
-		AEnemy* Enemy = GetWorld()->SpawnActor<AEnemy>
+	FVector SpawnLocation = SpawnScene->GetComponentLocation();
+	FRotator Spawnrotation = FRotator::ZeroRotator;
+	AEnemy* Enemy = GetWorld()->SpawnActor<AEnemy>
 			(SpawnObject, SpawnLocation, Spawnrotation, SpawnParams);
 
 	if (Enemy != NULL)
 	{
 		Enemy->NumberSpawn = NumberSpawn;
+		Enemy->Damage=Damage;
+		Enemy->Health=Health;
 	}
 }
+
+//Funcion Blueprint
 
 bool ASpawner::vBattle() const
 {
@@ -151,7 +171,6 @@ bool ASpawner::vRevive() const
 	}
 }
 
-
 int ASpawner::vNumberSpawn()
 {
 	return NumberSpawn;
@@ -159,14 +178,12 @@ int ASpawner::vNumberSpawn()
 
 int ASpawner::vNumberSpawnPast()
 {
-	
 	if (CharacterD != NULL)
 	{
 		return CharacterD->NumberSpawnPast;
 	}
 	else
 	{
-		print("hoola");
 		return 0;
 	}
 }
@@ -181,25 +198,5 @@ int ASpawner::vNumberSpawnCharacter()
 	{
 		return 0;
 	}
-}
-
-// Called when the game starts or when spawned
-void ASpawner::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &ASpawner::BeginOverlap);
-	BoxCollision->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd);
-
-	OutBoxRespawn->OnComponentEndOverlap.AddDynamic(this, &ASpawner::OnOverlapEnd2);
-	
-	CharacterD = Cast<APrototipoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-	Spawn();
-}
-
-// Called every frame
-void ASpawner::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 

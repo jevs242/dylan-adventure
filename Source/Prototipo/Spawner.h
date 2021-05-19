@@ -1,4 +1,5 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+//Jose E Velazquez Sepulveda
+//Spawner.h
 
 #pragma once
 
@@ -47,16 +48,55 @@ public:
 	UPROPERTY(EditAnywhere ,BlueprintReadOnly)
 		class USceneComponent* Spawn5;
 
+protected:
+	
+	virtual void BeginPlay() override;
+	
+public:	
+
+	//Spawn
+
+	UPROPERTY(EditAnywhere)
+		bool BossFight = false;
+	
 	UFUNCTION(BlueprintCallable)
 		void Spawn();
 
 	void FSpawn(USceneComponent* SpawnScene);
 
+
+	//Enemy Variable
+	
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AEnemy> SpawnObject;
+	
+	UPROPERTY(EditAnywhere)
+		int Health = 100;
+
+	UPROPERTY(EditAnywhere)
+		int Damage = 25;
+	
+	UPROPERTY(EditAnywhere)
+		int Waves = 0;
+
 	UPROPERTY(EditAnywhere)
 		int AmountEnemy = 0;
 
+	//Character Variable
+	
+	class APrototipoCharacter* CharacterD;
+
 	UPROPERTY(EditAnywhere)
-		TSubclassOf<class AEnemy> SpawnObject;
+		int NumberSpawn = 0;
+	
+	bool Battle = false;
+
+	bool bRevive = false;
+
+	bool OutBox = false;
+
+	//Funcion Blueprint
+
 
 	UFUNCTION(BlueprintPure)
 		bool vBattle() const;
@@ -67,34 +107,17 @@ public:
 	UFUNCTION(BlueprintPure)
 		bool vRevive() const;
 
-	class APrototipoCharacter* CharacterD;
-
-	bool Battle = false;
-
-	bool bRevive = false;
-
-	bool OutBox = false;
-
-	UPROPERTY(EditAnywhere)
-		int Waves = 0;
-
-	UPROPERTY(EditAnywhere)
-		int NumberSpawn = 0;
-
 	UFUNCTION(BlueprintPure)
-	int vNumberSpawn();
+		int vNumberSpawn();
 
 	UFUNCTION(BlueprintPure)
 		int vNumberSpawnPast();
 	
 	UFUNCTION(BlueprintPure)
 		int vNumberSpawnCharacter();
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	//Sound
 
+	UPROPERTY(EditAnywhere)
+		USoundBase* BossBegin;
 };

@@ -52,9 +52,7 @@ APrototipoCharacter::APrototipoCharacter()
 
 	BoxCollision->SetupAttachment(RootComponent);
 
-	Resistence = MaxResistence;
 
-	Health = MaxHealth;
 
 	//Shield
 
@@ -95,6 +93,31 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 }
 
+void APrototipoCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Health = MaxHealth;
+	Resistence = MaxResistence;
+
+	if (SwordClass != nullptr)
+	{
+		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);
+		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Sword_r"));
+		Sword->SetOwner(this);
+	}
+	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 1.0f, false);
+}
+
+void APrototipoCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	vResistence(DeltaSeconds);
+	vHeal(DeltaSeconds);
+	bJump = CharacterMovement->IsFalling();
+}
+
 //////UI//////
 
 int APrototipoCharacter::GetGems() const
@@ -129,31 +152,6 @@ bool APrototipoCharacter::Death() const
 
 ///////////////////////////////////
 
-void APrototipoCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (SwordClass != nullptr)
-	{
-		Sword = GetWorld()->SpawnActor<ASword>(SwordClass);
-		Sword->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Sword_r"));
-		Sword->SetOwner(this);
-	}
-	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 1.0f, false);
-}
-
-void APrototipoCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	vResistence(DeltaSeconds);
-
-	vHeal(DeltaSeconds);
-	
-	bJump = CharacterMovement->IsFalling();
-
-	
-}
 
 void APrototipoCharacter::MoveForward(float Value)
 {
@@ -219,11 +217,15 @@ void APrototipoCharacter::vHeal(float DeltaSeconds)
 {
 	if(!Battle)
 	{
-		if (Health <= 100 && bHeal)
+		if (Health <= MaxHealth && bHeal)
 		{
 			Health += Down * DeltaSeconds;
+			if(Health >= MaxHealth && bHeal)
+			{
+				Health = MaxHealth;
+			}
 		}
-		else if(Health <= 100 && !Healok)
+		else if(Health <= MaxHealth && !Healok)
 		{
 			GetWorld()->GetTimerManager().SetTimer(FHeal, this, &APrototipoCharacter::vHealTime, HealTime, false);
 			Healok = true;
@@ -251,6 +253,7 @@ void APrototipoCharacter::Attack()
 {
 	if (M_Attack && !bAttack && !bJump && Resistence > DownAttack)
 	{
+		UGameplayStatics::SpawnSoundAttached(AttackSound, RootComponent, TEXT("SwordSocket"));
 		bAttackActive = true;
 		rnum = FMath::RandRange(1, 2);
 
@@ -286,6 +289,7 @@ void APrototipoCharacter::Defence()
 {
 	if (!bAttack && !bDefence && !bJump)
 	{
+		UGameplayStatics::SpawnSoundAttached(ShieldSound, RootComponent, TEXT("SwordSocket"));
 		bDefence = true;
 		CharacterMovement->MaxWalkSpeed = 300;
 		bResistence = false;
@@ -317,6 +321,7 @@ void APrototipoCharacter::TeleportDeath()
 	SetActorLocation(CoordinatesIsland[IslandNumber]);
 	Health = MaxHealth;
 	bRevive = true;
+	Battle = false;
 
 }
 
@@ -339,9 +344,13 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 		if (WavesComplete[iWaves] == false)
 		{
 			WavesComplete[iWaves] = true;
-			if (WavesComplete[2])
+			if (NumMissionG == 2)
 			{
 				TextMission = "-Go to the seller's house on the right of the island";
+			}
+			else if(NumMissionG == 4)
+			{
+				TextMission = "-Go to the seller on the back of the island";
 			}
 			else
 			{
@@ -387,31 +396,31 @@ void APrototipoCharacter::Mission(int NumMission)
 	switch (NumMission)
 	{
 	case 1:
-		if (!WavesComplete[1])
+		if (!WavesComplete[1] && TextMission != "-Kill all 3 enemies in the island 1")
 		{
-			TextMission = "-Kill the 3 enemies on island 1";
+			TextMission = "-Kill all 3 enemies in the island 1";
 		}
 		break;
 	case 2:
-		if (WavesComplete[1] && !WavesComplete[2])
+		if (WavesComplete[1] && !WavesComplete[2] && TextMission != "-Kill all 5 enemies in the center island 2")
 		{
-			TextMission = "-Kill the 5 enemies on island 2";
+			TextMission = "-Kill all 5 enemies in the center island 2";
 		}
 		break;
 	case 3:
-		if (WavesComplete[2] && !WavesComplete[3])
+		if (WavesComplete[2] && !WavesComplete[3] && TextMission != "-Kill all 3 enemies on the left of island 2")
 		{
-			TextMission = "-Kill the 3 enemies on island 2";
+			TextMission = "-Kill all 3 enemies on the left of island 2";
 		}
 		break;
 	case 4:
-		if (WavesComplete[3] && !WavesComplete[4])
+		if (WavesComplete[3] && !WavesComplete[4] && TextMission != "You have unlocked the top of the island!.\n-Go up kill all 4 enemies on the top of the island.")
 		{
-			TextMission = "-Kill the 4 enemies on island 2";
+			TextMission = "You have unlocked the top of the island!.\n-Go up kill all 4 enemies on the top of the island.";
 		}
 		break;
 	case 5:
-		if (WavesComplete[4] && !WavesComplete[5])
+		if (WavesComplete[4] && !WavesComplete[5] && TextMission != "-Kill the boss on island 3")
 		{
 			TextMission = "-Kill the boss on island 3";
 		}
@@ -419,6 +428,11 @@ void APrototipoCharacter::Mission(int NumMission)
 	default:
 		break;
 	}
+}
+
+void APrototipoCharacter::vDamageSound()
+{
+	UGameplayStatics::SpawnSoundAttached(DamageSound, RootComponent, TEXT("SwordSocket"));
 }
 
 

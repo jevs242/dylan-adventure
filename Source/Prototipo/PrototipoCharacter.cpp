@@ -107,6 +107,8 @@ void APrototipoCharacter::BeginPlay()
 		Sword->SetOwner(this);
 	}
 	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 1.0f, false);
+
+
 }
 
 void APrototipoCharacter::Tick(float DeltaSeconds)
@@ -355,6 +357,9 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 			else if(NumMissionG == 5)
 			{
 				TextMission = " ";
+				FOutputDeviceNull ar;
+
+				this->CallFunctionByNameWithArguments(TEXT("Final"), ar, NULL, true);
 			}
 			else
 			{

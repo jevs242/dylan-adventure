@@ -26,4 +26,23 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		int IslandNumber;
+
+	UPROPERTY(EditAnywhere)
+		FString	TextMission;
+
+	UPROPERTY(EditAnywhere)
+		bool WavesComplete1;
+
+	UPROPERTY(EditAnywhere)
+		bool WavesComplete2;
+
+	UPROPERTY(EditAnywhere)
+		bool WavesComplete3;
+
+	UPROPERTY(EditAnywhere)
+		bool WavesComplete4;
+
+	UPROPERTY(EditAnywhere)
+		bool WavesComplete5;
+		
 };

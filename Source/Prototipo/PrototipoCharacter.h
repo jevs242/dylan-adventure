@@ -237,7 +237,7 @@ public:
 
 	int IslandNumber = 0;
 
-	bool  Battle = false;
+	bool Battle = false;
 
 	int EnemyKill = 0 ;
 	
@@ -256,7 +256,7 @@ public:
 	int NumberSpawnPast = 0;
 
 	UFUNCTION(BlueprintPure)
-	int vNumberSpawn();
+		int vNumberSpawn();
 
 	UFUNCTION(BlueprintPure)
 		FString vMissionText();

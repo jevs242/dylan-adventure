@@ -352,6 +352,10 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 			{
 				TextMission = "-Go to the seller on the back of the island";
 			}
+			else if(NumMissionG == 5)
+			{
+				TextMission = " ";
+			}
 			else
 			{
 				TextMission = "-Return to the store for the next mission";
@@ -470,6 +474,13 @@ void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 	SaveGameInstance->PlayerLocation = this->GetActorLocation();
 	SaveGameInstance->Gems = Gems;
 	SaveGameInstance->IslandNumber = IslandNumber;
+	SaveGameInstance->TextMission = TextMission;
+	SaveGameInstance->WavesComplete1 = WavesComplete[0];
+	SaveGameInstance->WavesComplete2 = WavesComplete[1];
+	SaveGameInstance->WavesComplete3 = WavesComplete[2];
+	SaveGameInstance->WavesComplete4 = WavesComplete[3];
+	SaveGameInstance->WavesComplete5 = WavesComplete[4];
+	
 
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, FSlot, ISlot);
 
@@ -479,15 +490,20 @@ void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
 {
 	UMySaveGame* SaveGameInstance = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+	if(Cast <UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FSlot, ISlot)) != NULL)
+	{
 
-	SaveGameInstance = Cast <UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FSlot, ISlot));
+		SaveGameInstance = Cast <UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FSlot, ISlot));
 
-	this->SetActorLocation(SaveGameInstance->PlayerLocation);
-	Gems = SaveGameInstance->Gems;
-	IslandNumber = SaveGameInstance->IslandNumber;
-	
+		this->SetActorLocation(SaveGameInstance->PlayerLocation);
+		Gems = SaveGameInstance->Gems;
+		IslandNumber = SaveGameInstance->IslandNumber;
+	}
+	else
+	{
+		
+	}
 
-	print("Game Load");
 }
 
 bool APrototipoCharacter::bSave() const

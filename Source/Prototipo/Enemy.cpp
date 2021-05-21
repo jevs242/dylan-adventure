@@ -45,7 +45,7 @@ AEnemy::AEnemy()
 	
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	
+
 }
 
 void AEnemy::BeginPlay()

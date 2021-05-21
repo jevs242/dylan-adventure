@@ -530,12 +530,12 @@ void APrototipoCharacter::vUpgrade(int Upgrade , int Cost)
 			}
 			else
 			{
-				Mensaje1 = "Insufficient gems";
+				Mensaje1 = "Not enough gems";
 			}
 		}
 		else
 		{
-			Mensaje1 = "Complete updates";
+			Mensaje1 = "completed update";
 		}
 		break;
 	case 2:
@@ -549,31 +549,31 @@ void APrototipoCharacter::vUpgrade(int Upgrade , int Cost)
 			}
 			else
 			{
-				Mensaje2 = "Insufficient gems";
+				Mensaje2 = "Not enough gems";
 			}
 		}
 		else
 		{
-			Mensaje2 = "Complete updates";
+			Mensaje2 = "completed update";
 		}
 		break;
 	case 3:
-		if (Damage <= 100)
+		if (Damage <= 75)
 		{
 			if (Gems >= Cost)
 			{
-				Damage += 25;
+				Damage += 15;
 				Gems -= Cost;
 				Mensaje3 = "Successful upgrade";
 			}
 			else
 			{
-				Mensaje3 = "Insufficient gems";
+				Mensaje3 = "Not enough gems";
 			}
 		}
 		else
 		{
-			Mensaje3 = "Complete updates";
+			Mensaje3 = "completed update";
 		}
 		break;
 	default:
@@ -640,7 +640,6 @@ void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 	
 
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, FSlot, ISlot);
-
 }
 
 void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)

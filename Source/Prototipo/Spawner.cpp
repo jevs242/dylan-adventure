@@ -55,13 +55,13 @@ void ASpawner::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Ot
 		if (BossFight && !Character->Battle)
 		{
 			UGameplayStatics::SpawnSoundAttached(BossBegin, Spawn1, TEXT("BossFight"));
+			Character->IslandNumber = 3;
 		}
 		Character->NumberSpawn = NumberSpawn;
 		Character->EnemyWaves = AmountEnemy;
 		Battle = true;
 		Character-> Battle = true;
 		Character->Waves = Waves;
-		Character->IslandNumber = 3;
 	}
 }
 
@@ -136,7 +136,7 @@ void ASpawner::FSpawn(USceneComponent* SpawnScene)
 	{
 		Enemy->NumberSpawn = NumberSpawn;
 		Enemy->Damage=Damage;
-		Enemy->Health=Health;
+		Enemy->MaxHealth=Health;
 	}
 }
 

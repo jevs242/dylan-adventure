@@ -14,7 +14,7 @@ ABlocking::ABlocking()
 
 void ABlocking::vWaves(int iWaves)
 {
-	if(Character->WavesComplete[iWaves])
+	if(Character->WavesComplete[iWaves] && Character->Accept[iWaves])
 	{
 		Destroy();
 	}

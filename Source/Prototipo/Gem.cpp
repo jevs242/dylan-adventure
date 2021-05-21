@@ -32,7 +32,7 @@ void AGem::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherA
 	APrototipoCharacter* Character = Cast<APrototipoCharacter>(OtherActor);
 	if (Character)
 	{
-		Character->Gems++;
+		Character->Gems += FMath::RandRange(1, 2);
 		Destroy();
 	}
 }

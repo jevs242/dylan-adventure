@@ -63,16 +63,6 @@ void AEnemy::BeginPlay()
 	}
 }
 
-void AEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	if(!bDeath && See)
-	{		
-		APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
-		RotatorEnemy(PlayerPawn->GetActorLocation());
-	}
-}
-
 void AEnemy::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
 {
 	Jump();

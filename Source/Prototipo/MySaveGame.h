@@ -44,5 +44,41 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		bool WavesComplete5;
-		
+
+	UPROPERTY(EditAnywhere)
+		float Damage;
+
+	UPROPERTY(EditAnywhere)
+		int MaxHealth;
+
+	UPROPERTY(EditAnywhere)
+		float MaxResistence;
+
+	UPROPERTY(EditAnywhere)
+		bool Accept1;
+
+	UPROPERTY(EditAnywhere)
+		bool Accept2;
+
+	UPROPERTY(EditAnywhere)
+		bool Accept3;
+
+	UPROPERTY(EditAnywhere)
+		int NumberSpawnPast;
+
+	UPROPERTY(EditAnywhere)
+		int NumberSpawn;
+
+	UPROPERTY(EditAnywhere)
+		int EnemyWaves;
+
+	UPROPERTY(EditAnywhere)
+		int Waves;
+
+	UPROPERTY(EditAnywhere)
+		int EnemyKill;
+
+	UPROPERTY(EditAnywhere)
+		bool Battle;
+	
 };

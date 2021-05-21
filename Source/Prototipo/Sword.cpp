@@ -35,7 +35,7 @@ void ASword::BeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Othe
 		{
 			Character->bAttackActive = false;
 			Enemy->vDamageSound();
-			Enemy->Health -= Enemy->Damage;
+			Enemy->Health -= Character->Damage;
 			if (Enemy->Health <= 0)
 			{
 				Character->EnemyKill++;

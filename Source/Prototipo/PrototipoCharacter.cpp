@@ -1,3 +1,6 @@
+//Jose E Velazquez Sepulveda
+//PrototipoCharacter.cpp
+
 #include "PrototipoCharacter.h"
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
@@ -12,64 +15,46 @@
 #include "Kismet/GameplayStatics.h"
 #include "Misc/OutputDeviceNull.h"
 
-#define print(x) GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT(x));
-#define log(x) UE_LOG(LogTemp, Error, TEXT(x));
-#define string(x) GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Yellow, FString::Printf(TEXT("Here : %s"), (x).ToString());
-
-
 APrototipoCharacter::APrototipoCharacter()
 {
-	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 
-	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Configure character movement
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
-
-	// Create a camera boom (pulls in towards the player if there is a collision)
+	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->TargetArmLength = 300.0f;	
+	CameraBoom->bUsePawnControlRotation = true;
 
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 
 	BoxCollision->SetupAttachment(RootComponent);
-
-
 
 	//Shield
 
 	Shield = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Shield"));
 	Shield->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Shield->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("Shield_l"));
-
 }
 
 void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
-	// Set up gameplay key bindings
-	check(PlayerInputComponent);
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APrototipoCharacter::JumpCheck);
+	check(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APrototipoCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APrototipoCharacter::MoveRight);
@@ -90,7 +75,6 @@ void APrototipoCharacter::SetupPlayerInputComponent(class UInputComponent* Playe
 
 	PlayerInputComponent->BindAction("Defence", IE_Pressed, this, &APrototipoCharacter::Defence);
 	PlayerInputComponent->BindAction("Defence", IE_Released, this, &APrototipoCharacter::Defenceoff);
-
 }
 
 void APrototipoCharacter::BeginPlay()
@@ -107,8 +91,6 @@ void APrototipoCharacter::BeginPlay()
 		Sword->SetOwner(this);
 	}
 	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 1.0f, false);
-
-
 }
 
 void APrototipoCharacter::Tick(float DeltaSeconds)
@@ -120,7 +102,10 @@ void APrototipoCharacter::Tick(float DeltaSeconds)
 	bJump = CharacterMovement->IsFalling();
 }
 
-//////UI//////
+/// <summary>
+/// UI
+/// </summary>
+/// <returns></returns>
 
 int APrototipoCharacter::GetGems() const
 {
@@ -152,7 +137,12 @@ bool APrototipoCharacter::Death() const
 	return bDeath;
 }
 
-///////////////////////////////////
+//////////////////////////////////
+
+/// <summary>
+/// Movement
+/// </summary>
+/// <returns></returns>
 
 
 void APrototipoCharacter::MoveForward(float Value)
@@ -172,7 +162,6 @@ void APrototipoCharacter::MoveForward(float Value)
 			bLStay = true;
 		}
 	}
-
 }
 
 void APrototipoCharacter::MoveRight(float Value)
@@ -193,27 +182,33 @@ void APrototipoCharacter::MoveRight(float Value)
 			bRStay = true;
 		}
 	}
-	
 }
 
 
 void APrototipoCharacter::Run()
 {
-	if(!bAttack)
+	if(!bLStay || !bRStay)
 	{
-		CharacterMovement->MaxWalkSpeed = SpeedRun;
-		bResistence = true;
+		if(!bAttack)
+		{
+			CharacterMovement->MaxWalkSpeed = SpeedRun;
+			bResistence = true;
+		}
 	}
 }
 
 void APrototipoCharacter::NotRun()
 {
-	if (!bAttack)
-	{
-		CharacterMovement->MaxWalkSpeed = 600;
-		bResistence = false;
-	}
+	CharacterMovement->MaxWalkSpeed = 600;
+	bResistence = false;
 }
+
+//////////////////////////////////
+
+/// <summary>
+/// Recovery
+/// </summary>
+/// <returns></returns>
 
 void APrototipoCharacter::vHeal(float DeltaSeconds)
 {
@@ -232,7 +227,6 @@ void APrototipoCharacter::vHeal(float DeltaSeconds)
 			GetWorld()->GetTimerManager().SetTimer(FHeal, this, &APrototipoCharacter::vHealTime, HealTime, false);
 			Healok = true;
 		}
-
 	}
 }
 
@@ -241,21 +235,78 @@ void APrototipoCharacter::vHealTime()
 	bHeal = true;
 }
 
+void APrototipoCharacter::vResistence(float DeltaSeconds)
+{
+	if (bLStay && bRStay && !bAttack && !bJump)
+	{
+		NotRun();
+	}
+
+	
+	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
+	{
+		Resistence -= Down * DeltaSeconds;
+		
+	}
+	else if (!bResistence && Resistence <= MaxResistence && !bAttack && !bJump)
+	{
+		Resistence += Up * DeltaSeconds;
+	}
+	else if (Resistence <= 0)
+	{
+		NotRun();
+	}
+	
+	if(bAttack)
+	{
+		if(AttackResistence && Resistence > DownAttack)
+		{
+			Resistence -= DownAttack;
+			AttackResistence = false;
+		}
+	}
+}
+
+/// <summary>
+/// Location
+/// </summary>
+/// <returns></returns>
+
 void APrototipoCharacter::UpdateUltimateLocation()
 {
 	if (bSave())
 	{
 		UltimateLocation = GetActorLocation();
 	}
-
 	GetWorld()->GetTimerManager().SetTimer(ULocation, this, &APrototipoCharacter::UpdateUltimateLocation, 3.0f, false);
 }
 
+void APrototipoCharacter::TeleportDeath()
+{
+	FOutputDeviceNull ar;
+	
+	this->CallFunctionByNameWithArguments(TEXT("RevivePlayer"), ar, NULL, true);
+	SetActorLocation(CoordinatesIsland[IslandNumber]);
+	Health = MaxHealth;
+	bRevive = true;
+	Battle = false;
+}
+
+//////////////////////////////////
+
+/// <summary>
+/// Battle
+/// </summary>
+/// <returns></returns>
+
 void APrototipoCharacter::Attack()
 {
-	if (M_Attack && !bAttack && !bJump && Resistence > DownAttack)
+	if (M_Attack && !bAttack && !bDefence && !bJump && Resistence > DownAttack)
 	{
-		UGameplayStatics::SpawnSoundAttached(AttackSound, RootComponent, TEXT("SwordSocket"));
+		if (AttackSound != NULL)
+		{
+			UGameplayStatics::SpawnSoundAttached(AttackSound, RootComponent, TEXT("SwordSocket"));
+		}
 		bAttackActive = true;
 		rnum = FMath::RandRange(1, 2);
 
@@ -279,11 +330,11 @@ void APrototipoCharacter::Attack()
 		}
 
 		bAttack = true;
+		NotRun();
 
 		AttackResistence = true;
 
 		GetWorld()->GetTimerManager().SetTimer(FAttack, this, &APrototipoCharacter::AttackActive, TimeAttack, false);
-
 	}
 }
 
@@ -295,13 +346,12 @@ void APrototipoCharacter::Defence()
 		bDefence = true;
 		CharacterMovement->MaxWalkSpeed = 300;
 		bResistence = false;
-		bAttack = true;
 	}
 }
 
 void APrototipoCharacter::Defenceoff()
 {
-	if (bAttack && bDefence)
+	if (bDefence)
 	{
 		bDefence = false;
 		CharacterMovement->MaxWalkSpeed = 600;
@@ -315,17 +365,6 @@ void APrototipoCharacter::AttackActive()
 	bAttack = false;
 }
 
-void APrototipoCharacter::TeleportDeath()
-{
-	FOutputDeviceNull ar;
-	
-	this->CallFunctionByNameWithArguments(TEXT("RevivePlayer"), ar, NULL, true);
-	SetActorLocation(CoordinatesIsland[IslandNumber]);
-	Health = MaxHealth;
-	bRevive = true;
-	Battle = false;
-
-}
 
 void APrototipoCharacter::vDeath()
 {
@@ -336,8 +375,14 @@ void APrototipoCharacter::vDeath()
 	Cancelstreak(Waves);
 	this->CallFunctionByNameWithArguments(TEXT("DeathPlayer") , ar , NULL , true);
 	GetWorld()->GetTimerManager().SetTimer(FDeath, this, &APrototipoCharacter::TeleportDeath, 4.0f, false);
-	
 }
+
+//////////////////////////////////
+
+/// <summary>
+/// Mission
+/// </summary>
+/// <returns></returns>
 
 void APrototipoCharacter::viWavesComplete(int iWaves)
 {
@@ -349,10 +394,12 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 			if (NumMissionG == 2)
 			{
 				TextMission = "-Go to the seller's house on the right of the island";
+				
 			}
 			else if(NumMissionG == 4)
 			{
 				TextMission = "-Go to the seller on the back of the island";
+				
 			}
 			else if(NumMissionG == 5)
 			{
@@ -365,6 +412,7 @@ void APrototipoCharacter::viWavesComplete(int iWaves)
 			{
 				TextMission = "-Return to the store for the next mission";
 			}
+			Gems += 5;
 		}
 	}
 	Cancelstreak(iWaves);
@@ -414,6 +462,7 @@ void APrototipoCharacter::Mission(int NumMission)
 		if (WavesComplete[1] && !WavesComplete[2] && TextMission != "-Kill all 5 enemies in the center island 2")
 		{
 			TextMission = "-Kill all 5 enemies in the center island 2";
+			Accept[1] = true;
 		}
 		break;
 	case 3:
@@ -423,14 +472,16 @@ void APrototipoCharacter::Mission(int NumMission)
 		}
 		break;
 	case 4:
-		if (WavesComplete[3] && !WavesComplete[4] && TextMission != "You have unlocked the top of the island!.\n-Go up kill all 4 enemies on the top of the island.")
+		if (WavesComplete[3] && !WavesComplete[4] && TextMission != "You have unlocked the top of the island!\n-Go up kill all 4 enemies on the top of the island.")
 		{
-			TextMission = "You have unlocked the top of the island!.\n-Go up kill all 4 enemies on the top of the island.";
+			TextMission = "You have unlocked the top of the island!\n-Go up kill all 4 enemies on the top of the island.";
+			Accept[3] = true;
 		}
 		break;
 	case 5:
 		if (WavesComplete[4] && !WavesComplete[5] && TextMission != "-Kill the boss on island 3")
 		{
+			Accept[4] = true;
 			TextMission = "-Kill the boss on island 3";
 		}
 		break;
@@ -439,36 +490,125 @@ void APrototipoCharacter::Mission(int NumMission)
 	}
 }
 
+//////////////////////////////////
+
+/// <summary>
+/// Sound
+/// </summary>
+/// <returns></returns>
+
 void APrototipoCharacter::vDamageSound()
 {
-	UGameplayStatics::SpawnSoundAttached(DamageSound, RootComponent, TEXT("SwordSocket"));
+	if (DamageSound != NULL)
+	{
+		UGameplayStatics::SpawnSoundAttached(DamageSound, RootComponent, TEXT("DamageSound"));
+	}
 }
 
+//////////////////////////////////
 
-void APrototipoCharacter::vResistence(float DeltaSeconds)
+/// <summary>
+/// Upgrade
+/// </summary>
+/// <returns></returns>
+
+void APrototipoCharacter::vUpgrade(int Upgrade , int Cost)
 {
-	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
+	Mensaje1 = " ";
+	Mensaje2 = " ";
+	Mensaje3 = " ";
+	switch (Upgrade)
 	{
-		Resistence -= Down * DeltaSeconds;
-	}
-	else if (!bResistence && Resistence <= 100)
-	{
-		Resistence += Up * DeltaSeconds;
-	}
-	else if (Resistence <= 0)
-	{
-		NotRun();
-	}
-	
-	if(bAttack)
-	{
-		if(AttackResistence && Resistence > DownAttack)
+	case 1:
+		if (MaxHealth <= 300)
 		{
-			Resistence -= DownAttack;
-			AttackResistence = false;
+			if (Gems >= Cost)
+			{
+				MaxHealth += 25;
+				Gems -= Cost;
+				Mensaje1 = "Successful upgrade";
+			}
+			else
+			{
+				Mensaje1 = "Insufficient gems";
+			}
 		}
+		else
+		{
+			Mensaje1 = "Complete updates";
+		}
+		break;
+	case 2:
+		if (MaxResistence <= 300)
+		{
+			if (Gems >= Cost)
+			{
+				MaxResistence += 25;
+				Gems -= Cost;
+				Mensaje2 = "Successful upgrade";
+			}
+			else
+			{
+				Mensaje2 = "Insufficient gems";
+			}
+		}
+		else
+		{
+			Mensaje2 = "Complete updates";
+		}
+		break;
+	case 3:
+		if (Damage <= 100)
+		{
+			if (Gems >= Cost)
+			{
+				Damage += 25;
+				Gems -= Cost;
+				Mensaje3 = "Successful upgrade";
+			}
+			else
+			{
+				Mensaje3 = "Insufficient gems";
+			}
+		}
+		else
+		{
+			Mensaje3 = "Complete updates";
+		}
+		break;
+	default:
+		break;
 	}
 }
+
+void APrototipoCharacter::ClearString()
+{
+	Mensaje1 = " ";
+	Mensaje2 = " ";
+	Mensaje3 = " ";
+}
+
+FString APrototipoCharacter::vUpgradeText(int Opc)
+{
+	switch (Opc)
+	{
+	case 1:
+		return Mensaje1;
+		break;
+	case 2:
+		return Mensaje2;
+		break;
+	case 3:
+		return Mensaje3;
+		break;
+	default:
+		return "";
+		break;
+	}
+}
+
+//////////////////////////////////
+
 
 ////////Save////////
 
@@ -479,17 +619,28 @@ void APrototipoCharacter::SaveGame(int ISlot, FString FSlot)
 	SaveGameInstance->PlayerLocation = this->GetActorLocation();
 	SaveGameInstance->Gems = Gems;
 	SaveGameInstance->IslandNumber = IslandNumber;
-	SaveGameInstance->TextMission = TextMission;
+	SaveGameInstance->TextMission = "-Return to the store for the next mission";
 	SaveGameInstance->WavesComplete1 = WavesComplete[0];
 	SaveGameInstance->WavesComplete2 = WavesComplete[1];
 	SaveGameInstance->WavesComplete3 = WavesComplete[2];
 	SaveGameInstance->WavesComplete4 = WavesComplete[3];
 	SaveGameInstance->WavesComplete5 = WavesComplete[4];
+	SaveGameInstance->Accept1 = Accept[1];
+	SaveGameInstance->Accept2 = Accept[3];
+	SaveGameInstance->Accept3 = Accept[4];
+	SaveGameInstance->MaxHealth = MaxHealth;
+	SaveGameInstance->Damage = Damage;
+	SaveGameInstance->MaxResistence = MaxResistence;
+	SaveGameInstance->NumberSpawnPast = NumberSpawnPast;
+	SaveGameInstance->NumberSpawn = NumberSpawn;
+	SaveGameInstance->EnemyWaves = EnemyWaves;
+	SaveGameInstance->Waves = Waves;
+	SaveGameInstance->EnemyKill = 0;
+	SaveGameInstance->Battle = Battle;
 	
 
 	UGameplayStatics::SaveGameToSlot(SaveGameInstance, FSlot, ISlot);
 
-	print("Game Saved");
 }
 
 void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
@@ -503,6 +654,24 @@ void APrototipoCharacter::LoadGame(int ISlot, FString FSlot)
 		this->SetActorLocation(SaveGameInstance->PlayerLocation);
 		Gems = SaveGameInstance->Gems;
 		IslandNumber = SaveGameInstance->IslandNumber;
+		TextMission = SaveGameInstance->TextMission;
+		WavesComplete[0]= SaveGameInstance->WavesComplete1;
+		WavesComplete[1] = SaveGameInstance->WavesComplete2;
+		WavesComplete[2] = SaveGameInstance->WavesComplete3;
+		WavesComplete[3] = SaveGameInstance->WavesComplete4;
+		WavesComplete[4] = SaveGameInstance->WavesComplete5;
+		Accept[1] = SaveGameInstance->Accept1;
+		Accept[3] = SaveGameInstance->Accept2;
+		Accept[4] = SaveGameInstance->Accept3;
+		MaxHealth = SaveGameInstance->MaxHealth;
+		Damage = SaveGameInstance->Damage;
+		MaxResistence = SaveGameInstance->MaxResistence;
+		NumberSpawnPast = SaveGameInstance->NumberSpawnPast;
+		NumberSpawn = SaveGameInstance->NumberSpawn;
+		EnemyWaves = SaveGameInstance->EnemyWaves;
+		Waves = SaveGameInstance->Waves;
+		EnemyKill = SaveGameInstance->EnemyKill;
+		Battle = SaveGameInstance->Battle;
 	}
 	else
 	{

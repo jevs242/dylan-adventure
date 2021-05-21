@@ -1,4 +1,5 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+//Jose E Velazquez Sepulveda
+//PrototipoCharacter.h
 
 #pragma once
 
@@ -13,56 +14,46 @@ class APrototipoCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-		/** Camera boom positioning the cameraa behind the character */
-		UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class USpringArmComponent* CameraBoom;
 
-	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 public:
 	APrototipoCharacter();
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseTurnRate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class UBoxComponent* BoxCollision;
 
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
 
 protected:
 	void Tick(float DeltaSeconds) override;
 
-	/** Called for forwards/backward input */
 	void MoveForward(float Value);
 
-	/** Called for side to side input */
 	void MoveRight(float Value);
 
 	virtual void BeginPlay() override;
 
-
 protected:
 
-	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
 
 public:
 
-	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 public:
 
 	UFUNCTION(BlueprintPure)
 		bool GetDefence() const;
+
 	//Vida
 
 	UFUNCTION(BlueprintPure)
@@ -101,7 +92,6 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 		bool vRevive() const;
-	
 
 	//Germ
 
@@ -173,18 +163,19 @@ private:
 
 public:
 
-	UPROPERTY(EditAnywhere)
-		float Damage = 20;
-
 	//Location
 
 	FVector UltimateLocation;
 
 	void UpdateUltimateLocation(); 
 
-
 	int Gems = 0;
 
+	//Battle
+
+	UPROPERTY(EditAnywhere)
+		float Damage = 20;
+	
 	void Attack();
 
 	void Defence();
@@ -240,6 +231,8 @@ public:
 	bool Battle = false;
 
 	int EnemyKill = 0 ;
+
+	//Mission
 	
 	int EnemyWaves = 0 , Waves = 0;
 
@@ -265,6 +258,8 @@ public:
 
 	int NumMissionG = 0;
 
+	bool Accept[5] = {false};
+
 	UFUNCTION(BlueprintCallable)
 		void Mission(int NumMission);
 
@@ -280,5 +275,19 @@ public:
 		USoundBase* ShieldSound;
 
 	void vDamageSound();
+
+	UFUNCTION(BlueprintCallable)
+		void vUpgrade(int Upgrade, int Cost);
+
+	UFUNCTION(BlueprintCallable)
+		void ClearString();
+
+	UFUNCTION(BlueprintPure)
+		FString vUpgradeText(int Opc);
+
+	FString Mensaje1 = "";
+	FString Mensaje2 = "";
+	FString Mensaje3 = "";
+	
 };
 

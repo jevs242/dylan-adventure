@@ -243,7 +243,7 @@ void APrototipoCharacter::vResistence(float DeltaSeconds)
 	}
 
 	
-	if (bResistence && Resistence > 0 && !bRStay && !bJump || bResistence && Resistence > 0 && !bLStay && !bJump)
+	if ((bResistence && Resistence > 0 && !bRStay && !bJump) || (bResistence && Resistence > 0 && !bLStay && !bJump))
 	{
 		Resistence -= Down * DeltaSeconds;
 		
@@ -479,7 +479,7 @@ void APrototipoCharacter::Mission(int NumMission)
 		}
 		break;
 	case 5:
-		if (WavesComplete[4] && !WavesComplete[5] && TextMission != "-Kill the boss on island 3")
+		if (WavesComplete[4] && TextMission != "-Kill the boss on island 3")
 		{
 			Accept[4] = true;
 			TextMission = "-Kill the boss on island 3";

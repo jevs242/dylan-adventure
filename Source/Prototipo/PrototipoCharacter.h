@@ -139,7 +139,7 @@ private:
 	void vHealTime();
 
 	UPROPERTY(EditAnywhere)
-		int HealTime = 2.5f;
+		float HealTime = 2.5f;
 
 	
 	UPROPERTY(EditAnywhere)

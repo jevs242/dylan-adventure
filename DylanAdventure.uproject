@@ -1,0 +1,17 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{000482BB-08DD-6A19-87AE-F510D16C3475}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "DylanAdventure",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"AIModule"
+			]
+		}
+	]
+}
